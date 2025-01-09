@@ -15,12 +15,10 @@ class CreateAttendeeTable extends Migration
     {
         Schema::create('attendee', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ticket_id');
             $table->string('name');
             $table->string('email');
             $table->string('phone_number');
-
-            $table->foreign('ticket_id')->references('id')->on('ticket');
+            
             $table->timestamps();
         });
     }
