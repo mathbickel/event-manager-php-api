@@ -15,13 +15,10 @@ class CreateTicketTable extends Migration
     {
         Schema::create('ticket', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('event_id');
             $table->string('name');
             $table->string('price');
             $table->string('status');
             $table->string('type');
-
-            $table->foreign('event_id')->references('id')->on('event');
             
             $table->timestamps();
         });
