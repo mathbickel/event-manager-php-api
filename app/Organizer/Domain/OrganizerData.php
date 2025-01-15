@@ -9,13 +9,13 @@ abstract class OrganizerData
     protected string $address;
     protected string $email;
 
-    public function __construct(int $id, string $name, string $phone_number, ?string $address, string $email)
+    public function __construct(int $id, string $name, string $email, string $phone_number, ?string $address)
     {
         $this->id = $id;
         $this->name = $name;
+        $this->email = $email;
         $this->phone_number = $phone_number;
         $this->address = $address ?? null;
-        $this->email = $email;
     }
 
     abstract public function toArray(): array;
