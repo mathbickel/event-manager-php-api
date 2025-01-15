@@ -1,18 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrganizerController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'organizer'], function () {
+    Route::get('/all', [OrganizerController::class, 'index'])->name('organizer.index');
+    Route::get('/{id}', [OrganizerController::class, 'getById'])->name('organizer.show');
+    Route::post('/', [OrganizerController::class, 'store'])->name('organizer.store');
+    Route::put('/{id}', [OrganizerController::class, 'update'])->name('organizer.update');
+    Route::delete('/{id}', [OrganizerController::class, 'destroy'])->name('organizer.destroy');
 });
