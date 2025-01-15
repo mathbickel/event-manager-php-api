@@ -2,5 +2,5 @@
 
 use App\Http\Controllers\Controller;
 
-class NotificationsController extends Controller 
+class ScheduleController extends Controller 
 {}
