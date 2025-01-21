@@ -9,6 +9,9 @@ class OrganizerModel extends Model
     protected $table = 'organizer';
 
     protected $fillable = [
-        'name', 'email', 'phone_number', 'address'
+        'name', 
+        'email', 
+        'phone_number', 
+        'address'
     ];
 }
