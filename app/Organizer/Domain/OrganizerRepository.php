@@ -19,7 +19,7 @@ interface OrganizerRepository extends BaseRepository
 
     /**
      * @param array $data
-     * @return T 
+     * @return Organizer
      */
 
     public function create(array $data): Organizer;
@@ -27,7 +27,7 @@ interface OrganizerRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return T 
+     * @return Organizer
      */
 
     public function update(array $data, int $id): Organizer;

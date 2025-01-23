@@ -3,8 +3,8 @@
 namespace App\Event\Infra;
 
 use App\Event\Domain\Event;
-use Illuminate\Database\Eloquent\Model;
 use App\Event\Domain\EventRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class EventRepositoryModel implements EventRepository
 {

@@ -4,7 +4,7 @@ namespace App\Event\Domain;
 
 class Event extends EventData
 {
-    protected function toArray(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -17,7 +17,7 @@ class Event extends EventData
         ];
     }
 
-    protected function toString(): string
+    public function toString(): string
     {
         return json_encode($this->toArray());
     }

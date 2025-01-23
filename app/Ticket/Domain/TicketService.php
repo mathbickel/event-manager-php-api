@@ -3,6 +3,8 @@
 namespace App\Ticket\Domain;
 
 use App\Service\BaseService;
+use Illuminate\Database\Eloquent\Collection;
+use App\Ticket\Domain\Ticket;
 
 interface TicketService extends BaseService
 {

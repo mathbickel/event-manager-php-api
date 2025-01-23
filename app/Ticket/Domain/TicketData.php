@@ -19,8 +19,8 @@ abstract class TicketData
         $this->status = $status;
     }
 
-    abstract protected function toArray(): array;
-    abstract protected function toString(): string;
+    abstract public function toArray(): array;
+    abstract public function toString(): string;
 
     public function getId(): int
     {

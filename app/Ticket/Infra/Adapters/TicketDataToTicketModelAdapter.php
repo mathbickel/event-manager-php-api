@@ -16,7 +16,7 @@ class TicketDataToTicketModelAdapter
     {
         return new TicketDataToTicketModelAdapter($ticket);
     }
-    protected function toTicketModel(TicketData $ticket): Model
+    protected function toTicketModel(TicketData $ticket): TicketModel
     {
         return new TicketModel($ticket->toArray());
     }

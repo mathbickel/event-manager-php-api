@@ -3,9 +3,9 @@
 namespace App\Ticket\Implementation;
 
 use App\Ticket\Domain\Ticket;
-use App\Ticket\Domain\TicketData;
 use App\Ticket\Domain\TicketRepository;
 use App\Ticket\Domain\TicketService;
+use Illuminate\Database\Eloquent\Collection;
 
 class TicketServiceImpl implements TicketService
 {

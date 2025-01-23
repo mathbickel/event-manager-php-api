@@ -5,11 +5,14 @@ namespace App\Organizer\Implementation;
 use App\Organizer\Domain\Organizer;
 use App\Organizer\Domain\OrganizerRepository;
 use App\Organizer\Domain\OrganizerService;
+use Illuminate\Database\Eloquent\Collection;
 
 class OrganizerServiceImpl implements OrganizerService
 {
-    public function __construct(private OrganizerRepository $organizerRepository)
+    public function __construct(
+        private OrganizerRepository $organizerRepository)
     {
+        $this->organizerRepository = $organizerRepository;
     }
 
     public function getAll(): Collection

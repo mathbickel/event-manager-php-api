@@ -4,7 +4,7 @@ namespace App\Ticket\Domain;
 
 class Ticket extends TicketData
 {
-    protected function toArray(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -15,7 +15,7 @@ class Ticket extends TicketData
         ];
     }
 
-    protected function toString(): string
+    public function toString(): string
     {
         return json_encode($this->toArray());
     }
