@@ -4,7 +4,7 @@ namespace App\Organizer\Domain;
 
 class Organizer extends OrganizerData
 {
-    public function toArray(): array
+    protected function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -15,7 +15,7 @@ class Organizer extends OrganizerData
         ];
     }
 
-    public function toString(): string
+    protected function toString(): string
     {
         return json_encode($this->toArray());
     }

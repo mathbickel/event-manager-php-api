@@ -18,8 +18,8 @@ abstract class OrganizerData
         $this->address = $address ?? null;
     }
 
-    abstract public function toArray(): array;
-    abstract public function toString(): string;
+    abstract protected function toArray(): array;
+    abstract protected function toString(): string;
     public function getId(): int
     {
         return $this->id;
