@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ScheduleController;
 
 Route::group(['prefix' => 'organizer'], function () {
     Route::get('/all', [OrganizerController::class, 'index'])->name('organizer.index');
@@ -27,4 +28,12 @@ Route::group(['prefix' => 'ticket'], function () {
     Route::post('/', [TicketController::class, 'store'])->name('ticket.store');
     Route::put('/{id}', [TicketController::class, 'update'])->name('ticket.update');
     Route::delete('/{id}', [TicketController::class, 'destroy'])->name('ticket.destroy');
+});
+
+Route::group(['prefix' => 'schedule'], function () {
+    Route::get('/all', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/{id}', [ScheduleController::class, 'getById'])->name('schedule.show');
+    Route::post('/', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::put('/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
+    Route::delete('/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
