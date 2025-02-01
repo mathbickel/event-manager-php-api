@@ -2,9 +2,12 @@
 
 namespace App\Organizer\Domain;
 
-use App\Service\BaseService;
+use App\Common\Getter;
+use App\Common\Creator;
+use App\Common\Updater;
+use App\Common\Deleter;
 use Illuminate\Database\Eloquent\Collection;
-interface OrganizerService extends BaseService
+interface OrganizerService extends Getter, Creator, Updater, Deleter
 {
     /**
     * @return Collection
