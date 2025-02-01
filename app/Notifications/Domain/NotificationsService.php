@@ -2,10 +2,13 @@
 
 namespace App\Notifications\Domain;
 
-use App\Service\BaseService;
+use App\Service\Creator;
+use App\Service\Deleter;
+use App\Service\Getter;
+use App\Service\Updater;
 use Illuminate\Database\Eloquent\Collection;
 
-interface NotificationsService extends BaseService
+interface NotificationsService extends Getter, Creator, Updater, Deleter
 {
     /**
      * @return Collection[]

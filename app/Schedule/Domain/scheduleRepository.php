@@ -2,11 +2,14 @@
 
 namespace App\Schedule\Domain;
 
-use App\Repository\BaseRepository;
+use App\Common\Getter;
+use App\Common\Creator;
+use App\Common\Updater;
+use App\Common\Deleter;
 use Illuminate\Database\Eloquent\Collection;
 use App\Schedule\Domain\Schedule;
 
-interface ScheduleRepository extends BaseRepository
+interface ScheduleRepository extends Getter, Creator, Updater, Deleter
 {
     /**
      * @return Collection
@@ -17,7 +20,7 @@ interface ScheduleRepository extends BaseRepository
      * @param int $id
      * @return Schedule
      */
-    public function find(int $id): Schedule;
+    public function getOne(int $id): Schedule;
 
     /**
      * @param array $data

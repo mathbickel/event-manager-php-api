@@ -2,11 +2,15 @@
 
 namespace App\Schedule\Domain;
 
-use App\Service\BaseService;
+
 use Illuminate\Database\Eloquent\Collection;
 use App\Schedule\Domain\Schedule;
+use App\Common\Getter;
+use App\Common\Creator;
+use App\Common\Updater;
+use App\Common\Deleter;
 
-interface ScheduleService extends BaseService
+interface ScheduleService extends Getter, Creator, Updater, Deleter
 {
     /**
      * @return Collection

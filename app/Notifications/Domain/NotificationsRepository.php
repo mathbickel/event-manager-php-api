@@ -2,13 +2,16 @@
 
 namespace App\Notifications\Domain;
 
-use App\Repository\BaseRepository;
+use App\Repository\Creator;
+use App\Repository\Deleter;
+use App\Repository\Getter;
+use App\Repository\Updater;
 use Illuminate\Database\Eloquent\Collection;
 
-interface NotificationsRepository extends BaseRepository
+interface NotificationsRepository extends Getter, Creator, Updater, Deleter
 {
     /**
-     * @return collection[]
+     * @return collection
      */
     public function getAll():collection;
 
@@ -33,7 +36,7 @@ interface NotificationsRepository extends BaseRepository
 
     /**
      * @param int $id
-     * @return void
+     * @return bool
      */
-    public function delete(int $id):bool;
+    public function delete(int $id): bool;
 }
