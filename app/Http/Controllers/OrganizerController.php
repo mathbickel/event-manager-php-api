@@ -11,9 +11,7 @@ class OrganizerController extends Controller
 {
     public function __construct(
         protected OrganizerService $service
-    ){
-
-    }
+    ){}
 
     /**
      * @return JsonResponse
@@ -39,7 +37,7 @@ class OrganizerController extends Controller
      * @return JsonResponse
      * @param int $id
      */
-    public function getById(int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $organizer = $this->service->getOne($id);
         return response()->json($organizer);
@@ -61,7 +59,7 @@ class OrganizerController extends Controller
      * @return JsonResponse
      * @param int $id
      */
-    public function destroy(int $id): JsonResponse
+    public function delete(int $id): JsonResponse
     {
         $this->service->delete($id);
         return response()->json(null, 204);
