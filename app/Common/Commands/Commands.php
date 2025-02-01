@@ -9,10 +9,6 @@ class GetAllCommand
     ){
         $this->repository = $repository;
     }
-
-    /**
-     * @return Collection
-     */
     public function execute()
     {
         return $this->repository->getAll();
@@ -26,11 +22,6 @@ class GetOneCommand
     ){
         $this->repository = $repository;
     }
-
-    /**
-     * @param int $id
-     * @return T
-     */
     public function execute(int $id)    
     {
         return $this->repository->getOne($id);
@@ -44,11 +35,6 @@ class CreateCommand
     ){
         $this->repository = $repository;
     }
-
-    /**
-     * @param array $data
-     * @return T
-     */
     public function execute(array $data)
     {
         return $this->repository->create($data);
@@ -62,12 +48,6 @@ class UpdateCommand
     ){
         $this->repository = $repository;
     }
-
-    /**
-     * @param array $data
-     * @param int $id
-     * @return T
-     */
     public function execute(array $data, int $id)
     {
         return $this->repository->update($data, $id);
@@ -81,11 +61,6 @@ class DeleteCommand
     ){
         $this->repository = $repository;
     }
-
-    /**
-     * @param int $id
-     * @return bool
-     */
     public function execute(int $id)
     {
         return $this->repository->delete($id);
