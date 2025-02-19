@@ -25,7 +25,7 @@ class OrganizerRepositoryModel implements OrganizerRepository
      * @param int $id
      * @return OrganizerModel
      */
-    public function find(int $id): Organizer
+    public function getOne(int $id): Organizer
     {
         return $this->organizer->find($id);
     }
