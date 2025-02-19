@@ -11,9 +11,9 @@ class OrganizerModelToOrganizerDataAdapter
     ){
         $this->organizer = $organizer;
     }
-    public static function getInstance(Organizer $organizer): self
+    public static function getInstance(): self
     {
-        return new OrganizerModelToOrganizerDataAdapter($organizer);
+        return new OrganizerModelToOrganizerDataAdapter($this->organizer);
     }
 
     protected function toOrganizerData(Organizer $organizer): Organizer

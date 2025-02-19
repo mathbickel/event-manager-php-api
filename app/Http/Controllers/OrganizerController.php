@@ -28,7 +28,6 @@ class OrganizerController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        dd($request->all());
         $data = $request->all();
         $organizer = $this->service->create($data);
         return response()->json($organizer);
