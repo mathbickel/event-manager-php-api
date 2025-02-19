@@ -14,7 +14,5 @@ class ImplementationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
-        $this->app->bind(EventService::class, EventServiceImpl::class);
     }
 }

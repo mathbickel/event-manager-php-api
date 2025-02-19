@@ -22,6 +22,10 @@ class RepositoryServiceProvider extends ServiceProvider
 {
     public function register()
     {
+
+        $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
+        $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
+
         $this->app->bind(Getter::class, EventRepository::class);
         $this->app->bind(Creator::class, EventRepository::class);
         $this->app->bind(Updater::class, EventRepository::class);
@@ -47,9 +51,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(DeleteCommand::class, function ($app) {
             return new DeleteCommand($app->make(Deleter::class));
         });
-
-        $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
-        $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
 
     }
 }
