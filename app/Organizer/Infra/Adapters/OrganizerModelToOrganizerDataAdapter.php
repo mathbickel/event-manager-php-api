@@ -2,7 +2,6 @@
 
 namespace App\Organizer\Infra;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Organizer\Domain\Organizer;
 
 class OrganizerModelToOrganizerDataAdapter

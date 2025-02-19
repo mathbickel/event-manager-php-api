@@ -12,10 +12,12 @@ use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use App\Event\Domain\EventRepository;
-use App\Event\Domain\EventService;
 use App\Organizer\Domain\OrganizerService;
 use App\Organizer\Domain\OrganizerRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Organizer\Implementation\OrganizerServiceImpl;
+use App\Organizer\Infra\OrganizerRepositoryModel;
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     public function register()
@@ -46,25 +48,8 @@ class RepositoryServiceProvider extends ServiceProvider
             return new DeleteCommand($app->make(Deleter::class));
         });
 
-        $this->app->bind(EventService::class, function ($app) {
-            return new EventService(
-                $app->make(GetAllCommand::class),
-                $app->make(GetOneCommand::class),
-                $app->make(CreateCommand::class),
-                $app->make(UpdateCommand::class),
-                $app->make(DeleteCommand::class)
-            );
-        });
-
-        $this->app->bind(OrganizerService::class, function ($app) {
-            return new OrganizerService(
-                $app->make(GetAllCommand::class),
-                $app->make(GetOneCommand::class),
-                $app->make(CreateCommand::class),
-                $app->make(UpdateCommand::class),
-                $app->make(DeleteCommand::class)
-            );
-        });
+        $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
+        $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
 
     }
 }
