@@ -22,13 +22,7 @@ class EventModelToEventDataAdapter
     public function toEventModel(): EventData
     {
         return new EventData(
-            $event->id,
-            $event->name,
-            $event->description,
-            $event->date_start,
-            $event->date_end,
-            $event->address,
-            $event->organizer_id
+            
         );
     }
 }
