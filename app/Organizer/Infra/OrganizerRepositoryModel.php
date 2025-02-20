@@ -34,11 +34,9 @@ class OrganizerRepositoryModel implements OrganizerRepository
      * @param array $data
      * @return Organizer
      */
-    public function create(array $data): Organizer
+    public function create(array $data): OrganizerModel
     {
-        $model = $this->organizer->create($data);
-        $data = new OrganizerModelToOrganizerDataAdapter::getInstance($model);
-        return $data;
+        return $this->organizer->create($data);
     }
 
     /**
