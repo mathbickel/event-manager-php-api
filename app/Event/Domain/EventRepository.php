@@ -4,6 +4,7 @@ namespace App\Event\Domain;
 
 use App\Repository\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
+use App\Event\Infra\EventModel;
 
 interface EventRepository extends BaseRepository
 {
@@ -16,20 +17,20 @@ interface EventRepository extends BaseRepository
     * @param int $id
     * @return Event
     */
-    public function find(int $id): Event;
+    public function find(int $id): EventModel;
 
     /**
     * @param array $data
     * @return Event
     */
-    public function create(array $data): Event;
+    public function create(array $data): EventModel;
 
     /**
     * @param array $data
     * @param int $id
     * @return Event
     */
-    public function update(array $data, int $id): Event;
+    public function update(array $data, int $id): EventModel;
 
     /**
     * @param int $id

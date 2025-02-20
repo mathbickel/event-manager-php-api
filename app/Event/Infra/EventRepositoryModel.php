@@ -2,9 +2,8 @@
 
 namespace App\Event\Infra;
 
-use App\Event\Domain\Event;
-use Illuminate\Database\Eloquent\Model;
 use App\Event\Domain\EventRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class EventRepositoryModel implements EventRepository
 {
@@ -13,8 +12,9 @@ class EventRepositoryModel implements EventRepository
     ){
         $this->event = $event;
     }
+
     /**
-     * @return Collection
+     * @return EventModel[]|Collection
      */
     public function getAll(): Collection
     {
@@ -23,18 +23,18 @@ class EventRepositoryModel implements EventRepository
 
     /**
      * @param int $id
-     * @return Event
+     * @return EventModel
      */
-    public function find(int $id): Event
+    public function find(int $id): EventModel
     {
         return $this->event->find($id);
     }
 
     /**
      * @param array $data
-     * @return Event
+     * @return EventModel
      */
-    public function create(array $data): Event
+    public function create(array $data): EventModel
     {
         return $this->event->create($data);
     }
@@ -42,9 +42,9 @@ class EventRepositoryModel implements EventRepository
     /**
      * @param array $data
      * @param int $id
-     * @return Event
+     * @return EventModel
      */
-    public function update(array $data, int $id): Event
+    public function update(array $data, int $id): EventModel
     {
         return $this->event->find($id)->update($data);
     }
