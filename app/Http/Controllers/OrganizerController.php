@@ -40,7 +40,7 @@ class OrganizerController extends Controller
     public function show(int $id): JsonResponse
     {
         $organizer = $this->service->getOne($id);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray());
     }
 
     /**     
@@ -52,7 +52,7 @@ class OrganizerController extends Controller
     {
         $data = $request->all();
         $organizer = $this->service->update($data, $id);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray());
     }
 
     /**     

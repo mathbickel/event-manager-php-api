@@ -32,19 +32,23 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function getOne(int $id): Organizer
     {
-        return $this->getOneCommand->execute($id);
+        $model = $this->getOneCommand->execute($id);
+        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
+        return $adapter->toOrganizerData();
     }
 
     public function create(array $data): Organizer
     {
         $model = $this->createCommand->execute($data);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
-        return $adapter->toOrganizerData($model);
+        return $adapter->toOrganizerData();
     }
 
     public function update(array $data, int $id): Organizer
     {
-        return $this->updateCommand->execute($data, $id);
+        $model = $this->updateCommand->execute($data, $id);
+        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
+        return $adapter->toOrganizerData();
     }
 
     public function delete(int $id): bool

@@ -17,14 +17,14 @@ class OrganizerModelToOrganizerDataAdapter
         return new OrganizerModelToOrganizerDataAdapter($organizer);
     }
 
-    public function toOrganizerData(OrganizerModel $organizer): Organizer
+    public function toOrganizerData(): Organizer
     {
         return new Organizer(
-            $organizer->id,
-            $organizer->name,
-            $organizer->email,
-            $organizer->phone_number,
-            $organizer->address
+            $this->organizer->id,
+            $this->organizer->name,
+            $this->organizer->email,
+            $this->organizer->phone_number,
+            $this->organizer->address
         );
     }
 }

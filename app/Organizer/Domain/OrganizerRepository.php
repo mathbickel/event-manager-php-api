@@ -19,7 +19,7 @@ interface OrganizerRepository extends Getter, Creator, Updater, Deleter
     * @param int $id
     * @return Organizer
     */
-    public function getOne(int $id): Organizer;
+    public function getOne(int $id): OrganizerModel;
 
     /**
     * @param array $data
@@ -34,7 +34,7 @@ interface OrganizerRepository extends Getter, Creator, Updater, Deleter
     * @return Organizer
     */
 
-    public function update(array $data, int $id): Organizer;
+    public function update(array $data, int $id): OrganizerModel;
 
     /**
     * @param int $id
