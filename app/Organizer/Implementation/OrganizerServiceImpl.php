@@ -10,6 +10,7 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
+use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
 
 class OrganizerServiceImpl implements OrganizerService
 {
@@ -21,6 +22,9 @@ class OrganizerServiceImpl implements OrganizerService
         private DeleteCommand $deleteCommands
     ){}
 
+    /**
+    * @return Organizer[]|Collection
+    */
     public function getAll(): Collection
     {
         return $this->getAllCommand->execute();
@@ -33,7 +37,9 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function create(array $data): Organizer
     {
-        return $this->createCommand->execute($data);
+        $model = $this->createCommand->execute($data);
+        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
+        return $adapter->toOrganizerData($model);
     }
 
     public function update(array $data, int $id): Organizer

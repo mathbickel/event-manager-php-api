@@ -19,7 +19,7 @@ class OrganizerController extends Controller
     public function index(): JsonResponse
     {
         $organizers = $this->service->getAll();
-        return response()->json($organizers);
+        return response()->json($organizers->toArray());
     }
 
     /**     
@@ -30,7 +30,7 @@ class OrganizerController extends Controller
     {
         $data = $request->all();
         $organizer = $this->service->create($data);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray(), 201);
     }
 
     /**     

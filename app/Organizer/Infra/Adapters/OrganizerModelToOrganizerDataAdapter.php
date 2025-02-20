@@ -1,29 +1,30 @@
 <?php
 
-namespace App\Organizer\Infra;
+namespace App\Organizer\Infra\Adapters;
 
+use App\Organizer\Infra\OrganizerModel;
 use App\Organizer\Domain\Organizer;
 
 class OrganizerModelToOrganizerDataAdapter
 {
     public function __construct(
-        private Organizer $organizer
+        private OrganizerModel $organizer
     ){
         $this->organizer = $organizer;
     }
-    public static function getInstance(): self
+    public static function getInstance(OrganizerModel $organizer): self
     {
-        return new OrganizerModelToOrganizerDataAdapter($this->organizer);
+        return new OrganizerModelToOrganizerDataAdapter($organizer);
     }
 
-    protected function toOrganizerData(Organizer $organizer): Organizer
+    public function toOrganizerData(OrganizerModel $organizer): Organizer
     {
         return new Organizer(
-            $organizer->getId(),
-            $organizer->getName(),
-            $organizer->getPhoneNumber(),
-            $organizer->getAddress(),
-            $organizer->getEmail()
+            $organizer->id,
+            $organizer->name,
+            $organizer->email,
+            $organizer->phone_number,
+            $organizer->address
         );
     }
 }
