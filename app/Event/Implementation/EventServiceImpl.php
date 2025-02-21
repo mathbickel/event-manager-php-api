@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EventServiceImpl implements EventService
 {
     public function __construct(
+        private EventRepository $eventRepository,
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
