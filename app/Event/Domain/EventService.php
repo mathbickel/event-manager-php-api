@@ -2,11 +2,13 @@
 
 namespace App\Event\Domain;
 
+use App\Common\Creator;
+use App\Common\Deleter;
+use App\Common\Getter;
+use App\Common\Updater;
 use Illuminate\Database\Eloquent\Collection;
-use App\Service\Getter;
-use App\Service\Creator;
-use App\Service\Deleter;
-use App\Service\Updater;
+use App\Event\Domain\Event;
+
 
 interface EventService extends Getter, Creator, Updater, Deleter
 {

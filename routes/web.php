@@ -17,7 +17,7 @@ Route::group(['prefix' => 'organizer'], function () {
 Route::group(['prefix' => 'event'], function () {
     Route::get('/all', [EventController::class, 'index'])->name('event.index');
     Route::get('/{id}', [EventController::class, 'show'])->name('event.show');
-    Route::post('/', [EventController::class, 'store'])->name('event.store');
+    Route::post('/store', [EventController::class, 'store'])->name('event.store');
     Route::put('/{id}', [EventController::class, 'update'])->name('event.update');
     Route::delete('/{id}', [EventController::class, 'delete'])->name('event.delete');
 });
@@ -25,7 +25,7 @@ Route::group(['prefix' => 'event'], function () {
 Route::group(['prefix' => 'ticket'], function () {
     Route::get('/all', [TicketController::class, 'index'])->name('ticket.index');
     Route::get('/{id}', [TicketController::class, 'show'])->name('ticket.show');
-    Route::post('/', [TicketController::class, 'store'])->name('ticket.store');
+    Route::post('/store', [TicketController::class, 'store'])->name('ticket.store');
     Route::put('/{id}', [TicketController::class, 'update'])->name('ticket.update');
     Route::delete('/{id}', [TicketController::class, 'delete'])->name('ticket.delete');
 });
@@ -33,7 +33,7 @@ Route::group(['prefix' => 'ticket'], function () {
 Route::group(['prefix' => 'schedule'], function () {
     Route::get('/all', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
-    Route::post('/', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::post('/store', [ScheduleController::class, 'store'])->name('schedule.store');
     Route::put('/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::delete('/{id}', [ScheduleController::class, 'delete'])->name('schedule.delete');
 });

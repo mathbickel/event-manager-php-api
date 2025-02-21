@@ -2,10 +2,8 @@
 
 namespace App\Event\Infra\Adapters;
 
-use App\Event\Domain\Event;
 use App\Event\Domain\EventData;
 use App\Event\Infra\EventModel;
-use Illuminate\Database\Eloquent\Model;
 
 class EventModelToEventDataAdapter
 {
@@ -22,7 +20,14 @@ class EventModelToEventDataAdapter
     public function toEventModel(): EventData
     {
         return new EventData(
-            
+            $this->event->id,
+            $this->event->organizer_id,
+            $this->event->name,
+            $this->event->description,
+            $this->event->date,
+            $this->event->location,
+            $this->event->start_date,
+            $this->event->end_date
         );
     }
 }
