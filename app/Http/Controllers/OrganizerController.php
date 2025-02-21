@@ -11,9 +11,7 @@ class OrganizerController extends Controller
 {
     public function __construct(
         protected OrganizerService $service
-    ){
-
-    }
+    ){}
 
     /**
      * @return JsonResponse
@@ -21,7 +19,7 @@ class OrganizerController extends Controller
     public function index(): JsonResponse
     {
         $organizers = $this->service->getAll();
-        return response()->json($organizers);
+        return response()->json($organizers->toArray());
     }
 
     /**     
@@ -32,17 +30,17 @@ class OrganizerController extends Controller
     {
         $data = $request->all();
         $organizer = $this->service->create($data);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray(), 201);
     }
 
     /**     
      * @return JsonResponse
      * @param int $id
      */
-    public function getById(int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $organizer = $this->service->getOne($id);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray());
     }
 
     /**     
@@ -54,14 +52,14 @@ class OrganizerController extends Controller
     {
         $data = $request->all();
         $organizer = $this->service->update($data, $id);
-        return response()->json($organizer);
+        return response()->json($organizer->toArray());
     }
 
     /**     
      * @return JsonResponse
      * @param int $id
      */
-    public function destroy(int $id): JsonResponse
+    public function delete(int $id): JsonResponse
     {
         $this->service->delete($id);
         return response()->json(null, 204);

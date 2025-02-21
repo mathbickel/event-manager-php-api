@@ -2,10 +2,13 @@
 
 namespace App\Event\Domain;
 
-use App\Service\BaseService;
 use Illuminate\Database\Eloquent\Collection;
+use App\Service\Getter;
+use App\Service\Creator;
+use App\Service\Deleter;
+use App\Service\Updater;
 
-interface EventService extends BaseService
+interface EventService extends Getter, Creator, Updater, Deleter
 {
     /**
      * @return Collection

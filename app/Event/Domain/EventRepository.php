@@ -2,11 +2,14 @@
 
 namespace App\Event\Domain;
 
-use App\Repository\BaseRepository;
+use App\Common\Getter;
+use App\Common\Creator;
+use App\Common\Updater;
+use App\Common\Deleter;
 use Illuminate\Database\Eloquent\Collection;
 use App\Event\Infra\EventModel;
 
-interface EventRepository extends BaseRepository
+interface EventRepository extends Getter, Creator, Updater, Deleter
 {
     /**
     * @return Collection

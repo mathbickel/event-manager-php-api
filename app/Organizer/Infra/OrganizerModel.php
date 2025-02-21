@@ -3,6 +3,7 @@
 namespace App\Organizer\Infra;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Event\Infra\EventModel;
 
 class OrganizerModel extends Model
 {
@@ -14,4 +15,14 @@ class OrganizerModel extends Model
         'phone_number', 
         'address'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function event()
+    {
+        return $this->belongsTo(EventModel::class, 'organizer_id');
+    }
 }

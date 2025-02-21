@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Organizer\Infra;
+namespace App\Organizer\Infra\Adapters;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Organizer\Infra\OrganizerModel;
 use App\Organizer\Domain\Organizer;
 
 class OrganizerModelToOrganizerDataAdapter
@@ -12,20 +12,19 @@ class OrganizerModelToOrganizerDataAdapter
     ){
         $this->organizer = $organizer;
     }
-    public static function getInstance(Model $organizer): self
+    public static function getInstance(OrganizerModel $organizer): self
     {
         return new OrganizerModelToOrganizerDataAdapter($organizer);
     }
 
-    protected function toOrganizerData(Model $organizer): Organizer
+    public function toOrganizerData(): Organizer
     {
         return new Organizer(
-            $organizer->id,
-            $organizer->name,
-            $organizer->email,
-            $organizer->password,
-            $organizer->created_at,
-            $organizer->updated_at
+            $this->organizer->id,
+            $this->organizer->name,
+            $this->organizer->email,
+            $this->organizer->phone_number,
+            $this->organizer->address
         );
     }
 }
