@@ -9,6 +9,7 @@ use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use App\Event\Domain\Event;
 use App\Event\Domain\EventService;
+use App\Event\Infra\Adapters\EventModelToEventDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
 
 class EventServiceImpl implements EventService
@@ -45,7 +46,9 @@ class EventServiceImpl implements EventService
      */
     public function create(array $data): Event
     {
-        return $this->createCommand->execute($data);
+        $model = $this->eventRepository->create($data);
+        $adapter = EventModelToEventDataAdapter::getInstance($model);
+        return $adapter->toEventModel();
     }
 
     /**

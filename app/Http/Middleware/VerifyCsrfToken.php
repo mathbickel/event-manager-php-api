@@ -13,5 +13,10 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/organizer/*',
+        '/attendee/*',
+        '/event/*',
+        '/ticket/*',
+        '/notifications/*',
+        '/schedule/*'
     ];
 }
