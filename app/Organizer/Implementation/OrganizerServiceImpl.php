@@ -19,7 +19,7 @@ class OrganizerServiceImpl implements OrganizerService
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommands
+        private DeleteCommand $deleteCommand
     ){}
 
     /**
@@ -53,6 +53,6 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function delete(int $id): bool
     {
-        return $this->deleteCommands->execute($id);
+        return $this->deleteCommand->execute($id);
     }
 }

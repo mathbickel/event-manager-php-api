@@ -18,19 +18,19 @@ class ScheduleRepositoryModel implements ScheduleRepository
         return ScheduleModel::all();
     }
 
-    public function find(int $id): Schedule
+    public function getOne(int $id): ScheduleModel
     {
         return ScheduleModel::find($id);
     }
 
-    public function create(array $data): Schedule
+    public function create(array $data): ScheduleModel
     {
         return ScheduleModel::create($data);
     }
 
-    public function update(array $data, int $id): Schedule  {
-        $schedule = ScheduleModel::find($id);
-        $schedule->update($data);
+    public function update(array $data, int $id): ScheduleModel  {
+        $schedule = ScheduleModel::find($id)->update($data);;
+        $schedule->find($id);
         return $schedule;
     }
 

@@ -10,12 +10,8 @@ abstract class EventData
     protected string $description;
     protected string $location;
     protected string $address;
-    protected string $start_date;
-    protected string $end_date;
-    protected string $start_time;
-    protected string $end_time;
 
-    public function __construct(int $id, int $organizer_id, string $name, string $description, string $location, string $address, string $start_date, string $end_date, string $start_time, string $end_time)
+    public function __construct(int $id, int $organizer_id, string $name, string $description, string $location, string $address)
     {
         $this->id = $id;
         $this->organizer_id = $organizer_id;
@@ -23,10 +19,6 @@ abstract class EventData
         $this->description = $description;
         $this->location = $location;
         $this->address = $address;
-        $this->start_date = $start_date;
-        $this->end_date = $end_date;
-        $this->start_time = $start_time;
-        $this->end_time = $end_time;
 
     }
 
@@ -62,26 +54,6 @@ abstract class EventData
         return $this->address;
     }
 
-    public function getStartDate(): string
-    {
-        return $this->start_date;
-    }
-
-    public function getEndDate(): string
-    {
-        return $this->end_date;
-    }
-
-    public function getStartTime(): string
-    {
-        return $this->start_time;
-    }
-
-    public function getEndTime(): string
-    {
-        return $this->end_time;
-    }
-
     public function setId(int $id): void
     {
         $this->id = $id;
@@ -110,26 +82,5 @@ abstract class EventData
     public function setAddress(?string $address): void
     {
         $this->address = $address;
-    }
-
-    public function setStartDate(string $start_date): void
-    {
-        $this->start_date = $start_date;
-    }
-
-    public function setEndDate(string $end_date): void
-    {
-        $this->end_date = $end_date;
-    }
-
-    public function setStartTime(string $start_time): void
-    {
-        $this->start_time = $start_time;
-    }
-
-    public function setEndTime(string $end_time): void
-    {
-        $this->end_time = $end_time;
-    }
-
+    }    
 }

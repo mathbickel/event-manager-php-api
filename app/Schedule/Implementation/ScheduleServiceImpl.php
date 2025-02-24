@@ -2,25 +2,32 @@
 
 namespace App\Schedule\Implementation;
 
-use App\Schedule\Domain\ScheduleData;
-use App\Schedule\Domain\ScheduleRepository;
+use App\Common\Commands\GetAllCommand;
+use App\Common\Commands\GetOneCommand;
+use App\Common\Commands\CreateCommand;
+use App\Common\Commands\UpdateCommand;
+use App\Common\Commands\DeleteCommand;
+use App\Schedule\Domain\Schedule;
 use App\Schedule\Domain\ScheduleService;
 use Illuminate\Database\Eloquent\Collection;
+use App\Schedule\Infra\Adapters\ScheduleModelToScheduleDataAdapter;
 
 class ScheduleServiceImpl implements ScheduleService
 {
     public function __construct(
-        private ScheduleRepository $scheduleRepository
-    ){
-        $this->scheduleRepository = $scheduleRepository;
-    }
+        private GetAllCommand $getAllCommand,
+        private GetOneCommand $getOneCommand,
+        private CreateCommand $createCommand,
+        private UpdateCommand $updateCommand,
+        private DeleteCommand $deleteCommand
+    ){}
 
     /**
      * @return Collection
      */
     public function getAll(): Collection
     {
-        return $this->scheduleRepository->getAll();
+        return $this->getAllCommand->execute();
     }
 
     /**
@@ -29,7 +36,9 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function getOne(int $id): Schedule
     {
-        return $this->scheduleRepository->find($id);
+        $model = $this->getOneCommand->execute($id);
+        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
+        return $adapter->toScheduleData();
     }
 
     /**
@@ -38,7 +47,9 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function create(array $data): Schedule
     {
-        return $this->scheduleRepository->create($data);
+        $model = $this->createCommand->execute($data);
+        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
+        return $adapter->toScheduleData();
     }
 
     /**
@@ -46,17 +57,19 @@ class ScheduleServiceImpl implements ScheduleService
      * @param array $data
      * @return Schedule
      */
-    public function update(int $id, array $data): Schedule
+    public function update(array $data, int $id): Schedule
     {
-        return $this->scheduleRepository->update($id, $data);
+        $model = $this->updateCommand->execute($data, $id);
+        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
+        return $adapter->toScheduleData();
     }
 
     /**
      * @param int $id
      * @return void
      */
-    public function delete(int $id): void
+    public function delete(int $id): bool
     {
-        $this->scheduleRepository->delete($id);
+        return $this->deleteCommand->execute($id);
     }
 }
