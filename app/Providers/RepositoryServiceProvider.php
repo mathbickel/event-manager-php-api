@@ -24,6 +24,10 @@ use App\Schedule\Domain\ScheduleService;
 use App\Schedule\Implementation\ScheduleServiceImpl;
 use App\Schedule\Domain\ScheduleRepository;
 use App\Schedule\Infra\ScheduleRepositoryModel;
+use App\Ticket\Domain\TicketService;
+use App\Ticket\Implementation\TicketServiceImpl;
+use App\Ticket\Domain\TicketRepository;
+use App\Ticket\Infra\TicketRepositoryModel;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -55,6 +59,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Creator::class, ScheduleRepository::class);
         $this->app->bind(Updater::class, ScheduleRepository::class);
         $this->app->bind(Deleter::class, ScheduleRepository::class);
+
+        //TICKET BINDS
+        $this->app->bind(TicketService::class, TicketServiceImpl::class);
+        $this->app->bind(TicketRepository::class, TicketRepositoryModel::class);
+
+        $this->app->bind(Getter::class, TicketRepository::class);
+        $this->app->bind(Creator::class, TicketRepository::class);
+        $this->app->bind(Updater::class, TicketRepository::class);
+        $this->app->bind(Deleter::class, TicketRepository::class);
 
         //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {

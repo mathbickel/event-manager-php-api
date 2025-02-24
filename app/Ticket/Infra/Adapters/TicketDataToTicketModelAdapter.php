@@ -8,9 +8,7 @@ class TicketDataToTicketModelAdapter
 {
     public function __construct(
         private TicketData $ticket
-    ){
-        $this->ticket = $ticket;
-    }
+    ){}
 
     public static function getInstance(TicketData $ticket): self
     {

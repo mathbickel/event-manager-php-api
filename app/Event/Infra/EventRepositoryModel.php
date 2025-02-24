@@ -9,9 +9,7 @@ class EventRepositoryModel implements EventRepository
 {
     public function __construct(
         protected EventModel $event
-    ){
-        $this->event = $event;
-    }
+    ){}
 
     /**
      * @return EventModel[]|Collection

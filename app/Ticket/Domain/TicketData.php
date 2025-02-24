@@ -5,15 +5,15 @@ namespace App\Ticket\Domain;
 abstract class TicketData
 {
     protected int $id;
-    protected int $eventId;
+    protected int $event_id;
     protected int $price;
     protected string $type;
     protected string $status;
 
-    public function __construct(int $id, int $eventId, int $price, string $type, string $status)
+    public function __construct(int $id, int $event_id, int $price, string $type, string $status)
     {
         $this->id = $id;
-        $this->eventId = $eventId;
+        $this->event_id = $event_id;
         $this->price = $price;
         $this->type = $type;
         $this->status = $status;
@@ -29,7 +29,7 @@ abstract class TicketData
 
     public function getEventId(): int
     {
-        return $this->eventId;
+        return $this->event_id;
     }
 
     public function getPrice(): int
@@ -54,7 +54,7 @@ abstract class TicketData
 
     public function setEventId(int $eventId): void
     {
-        $this->eventId = $eventId;
+        $this->event_id = $eventId;
     }
 
     public function setPrice(int $price): void
