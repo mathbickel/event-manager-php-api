@@ -9,7 +9,7 @@ class ScheduleModel extends Model
 {
     protected $table = 'schedule';
 
-    protected $filalable = [
+    protected $fillable = [
         'event_id',
         'start_time',
         'end_time',

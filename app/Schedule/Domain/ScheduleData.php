@@ -6,17 +6,15 @@ abstract class ScheduleData
 {
     protected int $id;
     protected int $event_id;
-    protected string $title;
     protected string $start_time;
     protected string $end_time;
     protected string $start_date;
     protected string $end_date;
 
-    public function __construct(int $id, int $event_id, string $title, string $start_time, string $end_time, string $start_date, string $end_date)
+    public function __construct(int $id, int $event_id, string $start_time, string $end_time, string $start_date, string $end_date)
     {
         $this->id = $id;
         $this->event_id = $event_id;
-        $this->title = $title;
         $this->start_time = $start_time;
         $this->end_time = $end_time;
         $this->start_date = $start_date;
@@ -34,11 +32,6 @@ abstract class ScheduleData
     public function getEventId(): int
     {
         return $this->event_id;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
     }
 
     public function getStartTime(): string
@@ -69,11 +62,6 @@ abstract class ScheduleData
     public function setEventId(int $event_id): void
     {
         $this->event_id = $event_id;
-    }
-
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
     }
 
     public function setStartTime(string $start_time): void

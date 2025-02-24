@@ -11,7 +11,6 @@ class Schedule extends ScheduleData
         return [
             'id' => $this->getId(),
             'event_id' => $this->getEventId(),
-            'title' => $this->getTitle(),
             'start_time' => $this->getStartTime(),
             'end_time' => $this->getEndTime(),
             'start_date' => $this->getStartDate(),
