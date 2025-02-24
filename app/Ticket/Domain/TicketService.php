@@ -2,11 +2,14 @@
 
 namespace App\Ticket\Domain;
 
-use App\Service\BaseService;
+use App\Common\Creator;
+use App\Common\Deleter;
+use App\Common\Getter;
+use App\Common\Updater;
 use Illuminate\Database\Eloquent\Collection;
 use App\Ticket\Domain\Ticket;
 
-interface TicketService extends BaseService
+interface TicketService extends Getter, Creator, Updater, Deleter
 {
     /**
      * @return Collection

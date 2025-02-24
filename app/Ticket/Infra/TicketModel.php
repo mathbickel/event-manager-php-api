@@ -2,6 +2,7 @@
 
 namespace App\Ticket\Infra;
 
+use App\Event\Infra\EventModel;
 use Illuminate\Database\Eloquent\Model;
 class TicketModel extends Model
 {
@@ -14,4 +15,14 @@ class TicketModel extends Model
         'price',
         'status'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function event()
+    {
+        return  $this->hasMany(EventModel::class, 'ticket_id', 'id')->orderBy('id', 'desc');
+    }
 }

@@ -9,22 +9,20 @@ class TicketModelToTicketDataAdapter
 {
     public function __construct(
         private TicketModel $ticket
-    ){
-        $this->ticket = $ticket;
-    }
+    ){}
     public static function getInstance(TicketModel $ticket): self
     {
         return new TicketModelToTicketDataAdapter($ticket);
     }
 
-    protected function toTicketData(Ticket $ticket): Ticket
+    public function toTicketData(): Ticket
     {
         return new Ticket(
-            $ticket->getId(),
-            $ticket->getEventId(),
-            $ticket->getPrice(),    
-            $ticket->getType(),
-            $ticket->getStatus()
+            $this->ticket->getId(),
+            $this->ticket->getEventId(),
+            $this->ticket->getPrice(),    
+            $this->ticket->getType(),
+            $this->ticket->getStatus()
         );
     }
 }
