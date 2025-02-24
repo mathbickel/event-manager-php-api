@@ -22,7 +22,6 @@ class ScheduleModelToScheduleDataAdapter
         return new Schedule(
             $this->schedule->id,
             $this->schedule->event_id,
-            $this->schedule->title,
             $this->schedule->start_time,
             $this->schedule->end_time,
             $this->schedule->start_date,

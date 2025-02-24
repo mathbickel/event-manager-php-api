@@ -2,7 +2,6 @@
 
 namespace App\Schedule\Infra;
 
-use App\Schedule\Domain\Schedule;
 use App\Schedule\Domain\ScheduleRepository;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -29,9 +28,8 @@ class ScheduleRepositoryModel implements ScheduleRepository
     }
 
     public function update(array $data, int $id): ScheduleModel  {
-        $schedule = ScheduleModel::find($id)->update($data);;
-        $schedule->find($id);
-        return $schedule;
+        $this->schedule->find($id)->update($data);
+        return $this->schedule->find($id);
     }
 
     public function delete(int $id): bool
