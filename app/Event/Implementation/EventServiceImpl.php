@@ -11,12 +11,10 @@ use App\Event\Domain\Event;
 use App\Event\Domain\EventService;
 use App\Event\Infra\Adapters\EventModelToEventDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
-use App\Event\Domain\EventRepository;
 
 class EventServiceImpl implements EventService
 {
     public function __construct(
-        private EventRepository $eventRepository,
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
@@ -39,7 +37,9 @@ class EventServiceImpl implements EventService
      */
     public function getOne(int $id): Event
     {
-        return $this->getOneCommand->execute($id);
+        $model = $this->getOneCommand->execute($id);
+        $adapter = EventModelToEventDataAdapter::getInstance($model);
+        return $adapter->toEventData();
     }
 
     /**
@@ -48,9 +48,9 @@ class EventServiceImpl implements EventService
      */
     public function create(array $data): Event
     {
-        $model = $this->eventRepository->create($data);
+        $model = $this->createCommand->execute($data);
         $adapter = EventModelToEventDataAdapter::getInstance($model);
-        return $adapter->toEventModel();
+        return $adapter->toEventData();
     }
 
     /**
@@ -60,7 +60,9 @@ class EventServiceImpl implements EventService
      */
     public function update(array $data, int $id): Event
     {
-        return $this->updateCommand->execute($data, $id);
+        $model = $this->updateCommand->execute($data, $id);
+        $adapter = EventModelToEventDataAdapter::getInstance($model);
+        return $adapter->toEventData();
     }
 
     /**

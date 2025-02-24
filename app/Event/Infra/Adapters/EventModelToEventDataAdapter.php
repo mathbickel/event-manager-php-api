@@ -2,7 +2,7 @@
 
 namespace App\Event\Infra\Adapters;
 
-use App\Event\Domain\EventData;
+use App\Event\Domain\Event;
 use App\Event\Infra\EventModel;
 
 class EventModelToEventDataAdapter
@@ -17,17 +17,19 @@ class EventModelToEventDataAdapter
         return new EventModelToEventDataAdapter($event);
     }
 
-    public function toEventModel(): EventData
+    public function toEventData(): Event
     {
-        return new EventData(
+        return new Event(
             $this->event->id,
             $this->event->organizer_id,
             $this->event->name,
             $this->event->description,
-            $this->event->date,
             $this->event->location,
+            $this->event->address,
             $this->event->start_date,
-            $this->event->end_date
+            $this->event->end_date,
+            $this->event->start_time,
+            $this->event->end_time
         );
     }
 }

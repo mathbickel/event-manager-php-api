@@ -14,13 +14,11 @@ class EventModel extends Model
         'name',
         'description',
         'location',
+        'address',
         'start_date',
         'end_date',
-    ];
-
-    protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_time',
+        'end_time'
     ];
 
     public function Organizer()
