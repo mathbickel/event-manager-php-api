@@ -27,7 +27,7 @@ class EventRepositoryModel implements EventRepository
      */
     public function getOne(int $id): EventModel
     {
-        return $this->event->getOne($id);
+        return $this->event->find($id);
     }
 
     /**
@@ -35,7 +35,7 @@ class EventRepositoryModel implements EventRepository
      * @return EventModel
      */
     public function create(array $data): EventModel
-    {
+    {   
         return $this->event->create($data);
     }
 
@@ -46,7 +46,8 @@ class EventRepositoryModel implements EventRepository
      */
     public function update(array $data, int $id): EventModel
     {
-        return $this->event->find($id)->update($data);
+        $this->event->find($id)->update($data);
+        return $this->event->find($id);
     }
 
     /**

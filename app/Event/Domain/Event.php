@@ -8,12 +8,15 @@ class Event extends EventData
     {
         return [
             'id' => $this->getId(),
+            'organizer_id' => $this->getOrganizerId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
+            'location' => $this->getLocation(),
+            'address' => $this->getAddress(),
             'start_date' => $this->getStartDate(),
             'end_date' => $this->getEndDate(),
-            'address' => $this->getAddress(),
-            'organizer_id' => $this->getOrganizerId(),
+            'start_time' => $this->getStartTime(),
+            'end_time' => $this->getEndTime()
         ];
     }
 

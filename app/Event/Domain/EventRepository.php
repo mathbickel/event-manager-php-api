@@ -18,20 +18,20 @@ interface EventRepository extends Getter, Creator, Updater, Deleter
 
     /**
     * @param int $id
-    * @return Event
+    * @return EventModel
     */
     public function getOne(int $id): EventModel;
 
     /**
     * @param array $data
-    * @return Event
+    * @return EventModel
     */
     public function create(array $data): EventModel;
 
     /**
     * @param array $data
     * @param int $id
-    * @return Event
+    * @return EventModel
     */
     public function update(array $data, int $id): EventModel;
 

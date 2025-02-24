@@ -19,24 +19,24 @@ class EventController extends Controller
     public function show(int $id)
     {
         $event = $this->service->getOne($id);
-        return response()->json($event);
+        return response()->json($event->toArray()); 
     }
 
     public function store()
     {
         $event = $this->service->create(request()->all());
-        return response()->json($event);
+        return response()->json($event->toArray(), 201);
     }
 
     public function update(int $id)
     {
         $event = $this->service->update(request()->all(), $id);
-        return response()->json($event);
+        return response()->json($event->toArray());
     }
 
     public function delete(int $id)
     {
         $event = $this->service->delete($id);
-        return response()->json($event);
+        return response()->json($event, 204);
     }
 }

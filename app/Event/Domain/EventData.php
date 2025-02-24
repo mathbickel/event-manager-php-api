@@ -5,22 +5,29 @@ namespace App\Event\Domain;
 abstract class EventData
 {
     protected int $id;
+    protected int $organizer_id;
     protected string $name;
     protected string $description;
+    protected string $location;
+    protected string $address;
     protected string $start_date;
     protected string $end_date;
-    protected string $address;
-    protected int $organizer_id;
+    protected string $start_time;
+    protected string $end_time;
 
-    public function __construct(int $id, string $name, string $description, string $start_date, string $end_date, string $address, int $organizer_id)
+    public function __construct(int $id, int $organizer_id, string $name, string $description, string $location, string $address, string $start_date, string $end_date, string $start_time, string $end_time)
     {
         $this->id = $id;
+        $this->organizer_id = $organizer_id;
         $this->name = $name;
         $this->description = $description;
+        $this->location = $location;
+        $this->address = $address;
         $this->start_date = $start_date;
         $this->end_date = $end_date;
-        $this->address = $address;
-        $this->organizer_id = $organizer_id;
+        $this->start_time = $start_time;
+        $this->end_time = $end_time;
+
     }
 
     abstract public function toArray(): array;
@@ -28,6 +35,11 @@ abstract class EventData
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getOrganizerId(): int
+    {
+        return $this->organizer_id;
     }
 
     public function getName(): string
@@ -40,6 +52,16 @@ abstract class EventData
         return $this->description;
     }
 
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
     public function getStartDate(): string
     {
         return $this->start_date;
@@ -50,19 +72,24 @@ abstract class EventData
         return $this->end_date;
     }
 
-    public function getAddress(): ?string
+    public function getStartTime(): string
     {
-        return $this->address;
+        return $this->start_time;
     }
 
-    public function getOrganizerId(): int
+    public function getEndTime(): string
     {
-        return $this->organizer_id;
+        return $this->end_time;
     }
 
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function setOrganizerId(int $organizer_id): void
+    {
+        $this->organizer_id = $organizer_id;
     }
 
     public function setName(string $name): void
@@ -75,6 +102,16 @@ abstract class EventData
         $this->description = $description;
     }
 
+    public function setLocation(string $location): void
+    {
+        $this->location = $location;
+    }
+
+    public function setAddress(?string $address): void
+    {
+        $this->address = $address;
+    }
+
     public function setStartDate(string $start_date): void
     {
         $this->start_date = $start_date;
@@ -85,13 +122,14 @@ abstract class EventData
         $this->end_date = $end_date;
     }
 
-    public function setAddress(?string $address): void
+    public function setStartTime(string $start_time): void
     {
-        $this->address = $address;
+        $this->start_time = $start_time;
     }
 
-    public function setOrganizerId(int $organizer_id): void
+    public function setEndTime(string $end_time): void
     {
-        $this->organizer_id = $organizer_id;
+        $this->end_time = $end_time;
     }
+
 }

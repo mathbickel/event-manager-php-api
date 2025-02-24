@@ -23,12 +23,18 @@ use App\Event\Domain\EventService;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
-    public function register()
+   public function register()
     {
-
+        //ORGANIZER BINDS
         $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
         $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
 
+        $this->app->bind(Getter::class, OrganizerRepository::class);
+        $this->app->bind(Creator::class, OrganizerRepository::class);
+        $this->app->bind(Updater::class, OrganizerRepository::class);
+        $this->app->bind(Deleter::class, OrganizerRepository::class);
+
+        //EVENT BINDS
         $this->app->bind(EventService::class, EventServiceImpl::class);
         $this->app->bind(EventRepository::class, EventRepositoryModel::class);
 
@@ -36,15 +42,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Creator::class, EventRepository::class);
         $this->app->bind(Updater::class, EventRepository::class);
         $this->app->bind(Deleter::class, EventRepository::class);
-        $this->app->bind(Getter::class, OrganizerRepository::class);
-        $this->app->bind(Creator::class, OrganizerRepository::class);
-        $this->app->bind(Updater::class, OrganizerRepository::class);
-        $this->app->bind(Deleter::class, OrganizerRepository::class);
 
+        //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {
             return new GetAllCommand($app->make(Getter::class));
         });
-
         $this->app->bind(GetOneCommand::class, function ($app) {
             return new GetOneCommand($app->make(Getter::class));
         });
