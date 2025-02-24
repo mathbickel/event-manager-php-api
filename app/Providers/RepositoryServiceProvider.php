@@ -11,6 +11,7 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
+use App\Event\Domain\EventRepository;
 use App\Organizer\Domain\OrganizerService;
 use App\Organizer\Domain\OrganizerRepository;
 use Illuminate\Support\ServiceProvider;
@@ -19,7 +20,6 @@ use App\Organizer\Infra\OrganizerRepositoryModel;
 use App\Event\Implementation\EventServiceImpl;
 use App\Event\Infra\EventRepositoryModel;
 use App\Event\Domain\EventService;
-use App\Event\Domain\EventRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -28,8 +28,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
         $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
-        $this->app->bind(EventRepository::class, EventRepositoryModel::class);
+
         $this->app->bind(EventService::class, EventServiceImpl::class);
+        $this->app->bind(EventRepository::class, EventRepositoryModel::class);
 
         $this->app->bind(Getter::class, EventRepository::class);
         $this->app->bind(Creator::class, EventRepository::class);

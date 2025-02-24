@@ -10,19 +10,21 @@ class EventModel extends Model
     protected $table = 'event';
     
     protected $fillable = [
-        'id',
+        'organizer_id',
         'name',
         'description',
-        'date',
-        'organizer_id'
+        'location',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
-        'date' => 'datetime',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function Organizer()
     {
-        return $this->hasOne(OrganizerModel::class, 'id', 'organizer_id');
+        return $this->belongsTo(OrganizerModel::class, 'organizer_id', 'id');
     }
 }

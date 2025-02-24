@@ -23,6 +23,6 @@ class OrganizerModel extends Model
 
     public function event()
     {
-        return $this->belongsTo(EventModel::class, 'organizer_id');
+        return  $this->hasMany(EventModel::class, 'organizer_id', 'id')->orderBy('date', 'desc');
     }
 }

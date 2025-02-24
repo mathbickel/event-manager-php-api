@@ -11,6 +11,7 @@ use App\Event\Domain\Event;
 use App\Event\Domain\EventService;
 use App\Event\Infra\Adapters\EventModelToEventDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
+use App\Event\Domain\EventRepository;
 
 class EventServiceImpl implements EventService
 {
