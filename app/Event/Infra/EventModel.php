@@ -3,6 +3,7 @@
 namespace App\Event\Infra;
 
 use App\Organizer\Infra\OrganizerModel;
+use App\Schedule\Infra\ScheduleModel;
 use Illuminate\Database\Eloquent\Model;
 
 class EventModel extends Model
@@ -14,15 +15,16 @@ class EventModel extends Model
         'name',
         'description',
         'location',
-        'address',
-        'start_date',
-        'end_date',
-        'start_time',
-        'end_time'
+        'address'
     ];
 
     public function Organizer()
     {
         return $this->belongsTo(OrganizerModel::class, 'organizer_id', 'id');
+    }
+
+    public function Schedule()
+    {
+        return $this->hasOne(ScheduleModel::class, 'event_id', 'id');
     }
 }

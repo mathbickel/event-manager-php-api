@@ -12,11 +12,7 @@ class Event extends EventData
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'location' => $this->getLocation(),
-            'address' => $this->getAddress(),
-            'start_date' => $this->getStartDate(),
-            'end_date' => $this->getEndDate(),
-            'start_time' => $this->getStartTime(),
-            'end_time' => $this->getEndTime()
+            'address' => $this->getAddress()
         ];
     }
 

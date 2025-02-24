@@ -3,24 +3,22 @@
 namespace App\Schedule\Infra\Adapters;
 
 use App\Schedule\Domain\Schedule;
-use App\Schedule\Domain\ScheduleData;
 use App\Schedule\Infra\ScheduleModel;
 
-class ScheduleDataToScheduleModel
+class ScheduleDataToScheduleModelAdapter
 {
     public function __construct(
         private Schedule $schedule
     ){
-        $this->schedule = $schedule;
     }
 
     public function getInstance(Schedule $schedule): self
     {
-        return new ScheduleDataToScheduleModel($schedule);
+        return new ScheduleDataToScheduleModelAdapter($schedule);
     }
 
-    public function toScheduleModel(Schedule $schedule): ScheduleModel
+    public function toScheduleModel(): ScheduleModel
     {
-        return new ScheduleModel($schedule->toArray());
+        return new ScheduleModel($this->schedule->toArray());
     }
 }

@@ -6,8 +6,8 @@ use App\Common\Getter;
 use App\Common\Creator;
 use App\Common\Updater;
 use App\Common\Deleter;
+use App\Schedule\Infra\ScheduleModel;
 use Illuminate\Database\Eloquent\Collection;
-use App\Schedule\Domain\Schedule;
 
 interface ScheduleRepository extends Getter, Creator, Updater, Deleter
 {
@@ -18,22 +18,22 @@ interface ScheduleRepository extends Getter, Creator, Updater, Deleter
 
     /**
      * @param int $id
-     * @return Schedule
+     * @return ScheduleModel
      */
-    public function getOne(int $id): Schedule;
+    public function getOne(int $id): ScheduleModel;
 
     /**
      * @param array $data
-     * @return Schedule
+     * @return ScheduleModel
      */
-    public function create(array $data): Schedule;
+    public function create(array $data): ScheduleModel;
 
     /**
      * @param array $data
      * @param int $id
-     * @return Schedule
+     * @return ScheduleModel
      */
-    public function update(array $data, int $id): Schedule;
+    public function update(array $data, int $id): ScheduleModel;
 
     /**
      * @param int $id

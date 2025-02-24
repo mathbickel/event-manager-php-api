@@ -20,6 +20,10 @@ use App\Organizer\Infra\OrganizerRepositoryModel;
 use App\Event\Implementation\EventServiceImpl;
 use App\Event\Infra\EventRepositoryModel;
 use App\Event\Domain\EventService;
+use App\Schedule\Domain\ScheduleService;
+use App\Schedule\Implementation\ScheduleServiceImpl;
+use App\Schedule\Domain\ScheduleRepository;
+use App\Schedule\Infra\ScheduleRepositoryModel;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -42,6 +46,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Creator::class, EventRepository::class);
         $this->app->bind(Updater::class, EventRepository::class);
         $this->app->bind(Deleter::class, EventRepository::class);
+
+        //SCHEDULE BINDS
+        $this->app->bind(ScheduleService::class, ScheduleServiceImpl::class);
+        $this->app->bind(ScheduleRepository::class, ScheduleRepositoryModel::class);
+
+        $this->app->bind(Getter::class, ScheduleRepository::class);
+        $this->app->bind(Creator::class, ScheduleRepository::class);
+        $this->app->bind(Updater::class, ScheduleRepository::class);
+        $this->app->bind(Deleter::class, ScheduleRepository::class);
 
         //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {

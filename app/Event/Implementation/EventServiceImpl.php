@@ -19,9 +19,8 @@ class EventServiceImpl implements EventService
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommands
-    ) {   
-    }
+        private DeleteCommand $deleteCommand
+    ){}
 
     /**
      * @return Collection
@@ -71,7 +70,7 @@ class EventServiceImpl implements EventService
      */
     public function delete(int $id): bool
     {
-        return $this->deleteCommands->execute($id);
+        return $this->deleteCommand->execute($id);
     }
 }
 
