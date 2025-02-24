@@ -25,9 +25,9 @@ class EventRepositoryModel implements EventRepository
      * @param int $id
      * @return EventModel
      */
-    public function find(int $id): EventModel
+    public function getOne(int $id): EventModel
     {
-        return $this->event->find($id);
+        return $this->event->getOne($id);
     }
 
     /**
