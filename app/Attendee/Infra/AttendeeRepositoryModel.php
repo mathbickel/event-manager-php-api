@@ -1,19 +1,41 @@
 <?php
 
-namespace App\Ateendee\Infra;
+namespace App\Attendee\Infra;
 
-use App\Attendee\Domain\Attendee;
-use App\Attendee\Domain\AttendeeRepository;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use App\Attendee\Domain\AttendeeRepository;
+use App\Attendee\Infra\AttendeeModel;
 
-class AttendeeRepositoryModel extends Model
+class AttendeeRepositoryModel implements AttendeeRepository
 {
-    protected $table = 'attendee';
+    public function __construct(
+        protected AttendeeModel $attendee
+    ) {}
 
-    protected $fillable = [
-        'event_id',
-        'user_id',
-        'ticket_id',
-    ];
-}   
+    public function getAll(): Collection
+    {
+        return $this->attendee->all();
+    }
+
+    public function getOne(int $id): AttendeeModel
+    {
+        return $this->attendee->find($id);
+    }
+
+    public function create(array $data): AttendeeModel
+    {
+        return $this->attendee->create($data);
+    }
+
+    public function update(array $data, int $id): AttendeeModel
+    {
+        $attendee = $this->attendee->find($id);
+        $attendee->update($data);
+        return $attendee;
+    }
+
+    public function delete(int $id): bool
+    {
+        return $this->attendee->destroy($id);
+    }
+}

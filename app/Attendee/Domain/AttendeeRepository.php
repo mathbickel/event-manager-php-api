@@ -2,11 +2,15 @@
 
 namespace App\Attendee\Domain;
 
-use App\Repository\BaseRepository;
+use App\Common\Creator;
+use App\Common\Deleter;
+use App\Common\Getter;
+use App\Common\Updater;
 use Illuminate\Database\Eloquent\Collection;
-interface AttendeeRepository extends BaseRepository
-{
+use App\Attendee\Infra\AttendeeModel;
 
+interface AttendeeRepository extends Getter, Creator, Updater, Deleter
+{
     /**
      * @return Collection
      */
@@ -14,23 +18,23 @@ interface AttendeeRepository extends BaseRepository
 
     /**
      * @param int $id
-     * @return Attendee
+     * @return AttendeeModel
      */
-    public function getOne(int $id): Attendee;
+    public function getOne(int $id): AttendeeModel;
 
     /**
-     * @param array $attendeeData
-     * @return Attendee
+     * @param array $data
+     * @return AttendeeModel
      */
-    public function create(array $attendeeData): Attendee;
+    public function create(array $data): AttendeeModel;
 
     /** 
      * @param int $id
-     * @param array $attendeeData
-     * @return Attendee
+     * @param array $data
+     * @return AttendeeModel
      */
     
-    public function update(array $attendeeData, int $id): Attendee;
+    public function update(array $data, int $id): AttendeeModel;
 
     /**
      * @param int $id

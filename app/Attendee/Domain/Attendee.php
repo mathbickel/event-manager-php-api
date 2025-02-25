@@ -10,9 +10,10 @@ class Attendee extends AttendeeData
     {
         return [
             'id' => $this->getId(),
+            'ticket_id' => $this->getTicketId(),
             'name' => $this->getName(),
             'email' => $this->getEmail(),
-            'ticket_id' => $this->getTicketId(),
+            'phone_number' => $this->getPhoneNumber()
         ];
     }
 
