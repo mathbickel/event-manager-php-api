@@ -28,6 +28,10 @@ use App\Ticket\Domain\TicketService;
 use App\Ticket\Implementation\TicketServiceImpl;
 use App\Ticket\Domain\TicketRepository;
 use App\Ticket\Infra\TicketRepositoryModel;
+use App\Attendee\Domain\AttendeeService;
+use App\Attendee\Domain\AttendeeRepository;
+use App\Attendee\Implementation\AttendeeServiceImpl;
+use App\Attendee\Infra\AttendeeRepositoryModel;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -68,6 +72,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Creator::class, TicketRepository::class);
         $this->app->bind(Updater::class, TicketRepository::class);
         $this->app->bind(Deleter::class, TicketRepository::class);
+
+        //ATTENDEE BINDS
+        $this->app->bind(AttendeeService::class, AttendeeServiceImpl::class);
+        $this->app->bind(AttendeeRepository::class, AttendeeRepositoryModel::class);
+
+        $this->app->bind(Getter::class, AttendeeRepository::class);
+        $this->app->bind(Creator::class, AttendeeRepository::class);
+        $this->app->bind(Updater::class, AttendeeRepository::class);
+        $this->app->bind(Deleter::class, AttendeeRepository::class);
 
         //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {

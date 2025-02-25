@@ -5,16 +5,18 @@ namespace App\Attendee\Domain;
 abstract class AttendeeData
 {
     protected int $id;
+    protected int $ticket_id;
     protected string $name;
     protected string $email;
-    protected int $ticket_id;
+    protected string $phone_number;
 
-    public function __construct(int $id, string $name, string $email, int $ticket_id)
+    public function __construct(int $id,  int $ticket_id,string $name, string $email, string $phone_number)
     {
         $this->id = $id;
+        $this->ticket_id = $ticket_id;
         $this->name = $name;
         $this->email = $email;
-        $this->ticket_id = $ticket_id;
+        $this->phone_number = $phone_number;
     }
 
     abstract public function toArray(): array;
@@ -23,6 +25,11 @@ abstract class AttendeeData
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getTicketId(): int
+    {
+        return $this->ticket_id;
     }
 
     public function getName(): string
@@ -35,14 +42,19 @@ abstract class AttendeeData
         return $this->email;
     }
 
-    public function getTicketId(): int
+    public function getPhoneNumber(): string
     {
-        return $this->ticket_id;
+        return $this->phone_number;
     }
 
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function setTicketId(int $ticket_id): void
+    {
+        $this->ticket_id = $ticket_id;
     }
 
     public function setName(string $name): void
@@ -55,8 +67,8 @@ abstract class AttendeeData
         $this->email = $email;
     }
 
-    public function setTicketId(int $ticket_id): void
+    public function setPhoneNumber(string $phone_number): void
     {
-        $this->ticket_id = $ticket_id;
+        $this->phone_number = $phone_number;
     }
 }

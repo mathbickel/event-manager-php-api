@@ -9,9 +9,7 @@ class OrganizerModelToOrganizerDataAdapter
 {
     public function __construct(
         private OrganizerModel $organizer
-    ){
-        $this->organizer = $organizer;
-    }
+    ) {}
     public static function getInstance(OrganizerModel $organizer): self
     {
         return new OrganizerModelToOrganizerDataAdapter($organizer);
