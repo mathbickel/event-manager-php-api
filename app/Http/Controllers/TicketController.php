@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Ticket\Domain\TicketService;
 class TicketController extends Controller
 {
     public function __construct(
@@ -34,7 +35,7 @@ class TicketController extends Controller
         return response()->json($ticket->toArray());
     }
 
-    public function destroy(int $id)
+    public function delete(int $id)
     {
         $this->service->delete($id);
         return response()->json(null, 204);

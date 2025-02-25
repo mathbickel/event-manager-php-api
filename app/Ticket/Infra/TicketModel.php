@@ -9,8 +9,8 @@ class TicketModel extends Model
     protected $table = 'ticket';
 
     protected $fillable = [
-        'id',
         'event_id',
+        'name',
         'type',
         'price',
         'status'
