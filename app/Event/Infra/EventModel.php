@@ -11,6 +11,20 @@ class EventModel extends Model
 {
     protected $table = 'event';
     
+    /**
+     * @var array Rules
+     */
+    public static $rules = [
+        'name' => 'required|max:50',
+        'organizer_id' => 'required',
+        'description' => 'required|string|max:255',
+        'location' => 'required',
+        'address' => 'required'
+    ];
+
+    /**
+     * @var array Fillable
+     */
     protected $fillable = [
         'organizer_id',
         'name',
@@ -19,6 +33,9 @@ class EventModel extends Model
         'address'
     ];
 
+    /**
+     * @var array Casts
+     */
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -26,7 +43,7 @@ class EventModel extends Model
 
     public function Organizer()
     {
-        return $this->belongsTo(OrganizerModel::class, 'organizer_id', 'id');
+        return $this->hasOne(OrganizerModel::class, 'organizer_id', 'id');
     }
 
     public function Schedule()

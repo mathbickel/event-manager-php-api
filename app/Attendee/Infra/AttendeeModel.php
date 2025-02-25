@@ -9,6 +9,19 @@ class AttendeeModel extends Model
 {
     protected $table = 'attendee';
 
+    /**
+     * @var array Rules
+     */
+    protected $rules = [
+        'ticket_id' => 'required',
+        'name' => 'required|max:50',
+        'email' => 'required',
+        'phone_number' => 'required|string|min:10|max:13',
+    ];
+
+    /**
+     * @var array Fillable
+     */
     protected $fillable = [
         'ticket_id',
         'name',
@@ -16,6 +29,9 @@ class AttendeeModel extends Model
         'phone_number',
     ];
 
+    /**
+     * @var array Casts
+     */
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -23,7 +39,7 @@ class AttendeeModel extends Model
 
     public function ticket()
     {
-        return $this->belongsTo(TicketModel::class, 'ticket_id', 'id');
+        return $this->hasOne(TicketModel::class, 'ticket_id');
     }
 
     public function notifications()

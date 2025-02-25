@@ -9,7 +9,16 @@ class NotificationsModel extends Model
 {
     protected $table = 'notifications';
 
-    protected $fillable = [
+    /**
+     * @var array Rules
+     */
+    protected $rules = [
+        'attendee_id' => 'required',
+        'message' => 'required|string|max:255',
+        'status' => 'required|string|in:sended,not_sended',
+    ];
+    
+     protected $fillable = [
         'id',
         'attendee_id',
         'message',
