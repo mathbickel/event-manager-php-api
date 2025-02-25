@@ -2,10 +2,11 @@
 
 namespace App\Notifications\Domain;
 
-use App\Repository\Creator;
-use App\Repository\Deleter;
-use App\Repository\Getter;
-use App\Repository\Updater;
+use App\Common\Creator;
+use App\Common\Deleter;
+use App\Common\Getter;
+use App\Common\Updater;
+use App\Notifications\Infra\NotificationsModel;
 use Illuminate\Database\Eloquent\Collection;
 
 interface NotificationsRepository extends Getter, Creator, Updater, Deleter
@@ -17,22 +18,22 @@ interface NotificationsRepository extends Getter, Creator, Updater, Deleter
 
     /**
      * @param int $id
-     * @return Notifications
+     * @return NotificationsModel
      */
-    public function find(int $id):Notifications;
+    public function getOne(int $id): NotificationsModel;
 
     /**
      * @param array $data
-     * @return Notifications
+     * @return NotificationsModel
      */
-    public function create(array $data):Notifications;
+    public function create(array $data): NotificationsModel;
 
     /**
      * @param array $data
      * @param int $id
-     * @return Notifications
+     * @return NotificationsModel
      */
-    public function update(array $data, int $id):Notifications;
+    public function update(array $data, int $id): NotificationsModel;
 
     /**
      * @param int $id

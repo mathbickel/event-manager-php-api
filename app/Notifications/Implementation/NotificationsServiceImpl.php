@@ -5,13 +5,14 @@ namespace App\Notifications\Implementation;
 use App\Notifications\Domain\Notifications;
 use App\Notifications\Domain\NotificationsRepository;
 use App\Notifications\Domain\NotificationsService;
+use App\Notifications\Infra\Adapters\NotificationsModelToNotificationsDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
 
 class NotificationsServiceImpl implements NotificationsService
 {
     public function __construct(
         private NotificationsRepository $notificationsRepository
-    ){}
+    ) {}
 
     /**
      * @return Collection
@@ -27,7 +28,9 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function getOne(int $id): Notifications
     {
-        return $this->notificationsRepository->find($id);
+        $model = $this->notificationsRepository->getOne($id);
+        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
+        return $adapter->NotificationsData();
     }
 
     /**
@@ -36,7 +39,9 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function create(array $data): Notifications
     {
-        return $this->notificationsRepository->create($data);
+        $model = $this->notificationsRepository->create($data);
+        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
+        return $adapter->NotificationsData();
     }
 
     /**
@@ -46,7 +51,9 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function update(array $data, int $id): Notifications
     {
-        return $this->notificationsRepository->update($data, $id);
+        $model = $this->notificationsRepository->update($data, $id);
+        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
+        return $adapter->NotificationsData();
     }
 
     /**

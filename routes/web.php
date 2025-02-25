@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendeeController;
+use App\Http\Controllers\NotificationsController;
 
 Route::group(['prefix' => 'organizer'], function () {
     Route::get('/all', [OrganizerController::class, 'index'])->name('organizer.index');
@@ -45,4 +46,12 @@ Route::group(['prefix' => 'attendee'], function () {
     Route::post('/store', [AttendeeController::class, 'store'])->name('attendee.store');
     Route::put('/{id}', [AttendeeController::class, 'update'])->name('attendee.update');
     Route::delete('/{id}', [AttendeeController::class, 'delete'])->name('attendee.delete');
+});
+
+Route::group(['prefix' => 'notifications'], function () {
+    Route::get('/all', [NotificationsController::class, 'index'])->name('notifications.index');
+    Route::get('/{id}', [NotificationsController::class, 'show'])->name('notifications.show');
+    Route::post('/store', [NotificationsController::class, 'store'])->name('notifications.store');
+    Route::put('/{id}', [NotificationsController::class, 'update'])->name('notifications.update');
+    Route::delete('/{id}', [NotificationsController::class, 'delete'])->name('notifications.delete');
 });
