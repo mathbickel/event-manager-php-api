@@ -3,12 +3,24 @@
 namespace App\Organizer\Infra;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Event\Infra\EventModel;
 
 class OrganizerModel extends Model
 {
     protected $table = 'organizer';
 
+    /**
+     * @var array Rules
+     */
+    protected $rules = [
+        'name' => 'required|max:50',
+        'email' => 'required',
+        'phone_number' => 'required|string|min:10|max:13',
+        'address' => 'required'
+    ];
+
+    /**
+     * @var array Fillable
+     */
     protected $fillable = [
         'name', 
         'email', 
@@ -16,13 +28,11 @@ class OrganizerModel extends Model
         'address'
     ];
 
+    /**
+     * @var array Casts
+     */
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function event()
-    {
-        return  $this->hasMany(EventModel::class, 'organizer_id', 'id')->orderBy('id', 'desc');
-    }
 }
