@@ -28,8 +28,7 @@ class OrganizerController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $data = $request->all();
-        $organizer = $this->service->create($data);
+        $organizer = $this->service->create($request->all());
         return response()->json($organizer->toArray(), 201);
     }
 
@@ -50,8 +49,7 @@ class OrganizerController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        $data = $request->all();
-        $organizer = $this->service->update($data, $id);
+        $organizer = $this->service->update($request->all(), $id);
         return response()->json($organizer->toArray());
     }
 

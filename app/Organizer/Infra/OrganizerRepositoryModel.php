@@ -36,6 +36,7 @@ class OrganizerRepositoryModel implements OrganizerRepository
      */
     public function create(array $data): OrganizerModel
     {
+        // dd($data);
         return $this->organizer->create($data);
     }
 
