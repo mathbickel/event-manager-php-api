@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Ticket\Domain\TicketService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
 class TicketController extends Controller
 {
     public function __construct(
@@ -11,31 +14,51 @@ class TicketController extends Controller
     )
     {}
 
-    public function index()
+    /*
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
     {
         $tickets = $this->service->getAll();
         return response()->json($tickets);
     }
 
-    public function show(int $id)
+    /*
+     * @return JsonResponse
+     * @param int $id
+     */
+    public function show(int $id): JsonResponse
     {
         $ticket = $this->service->getOne($id);
         return response()->json($ticket->toArray());
     }
 
-    public function store()
+    /*
+     * @return JsonResponse
+     * @param Request $request
+     */
+    public function store(Request $request): JsonResponse
     {
-        $ticket = $this->service->create(request()->all());
+        $ticket = $this->service->create($request->all());
         return response()->json($ticket->toArray(), 201);
     }
 
-    public function update(int $id)
+    /*
+     * @return JsonResponse
+     * @param Request $request
+     * @param int $id
+     */
+    public function update(Request $request, int $id): JsonResponse
     {
-        $ticket = $this->service->update(request()->all(), $id);
+        $ticket = $this->service->update($request->all(), $id);
         return response()->json($ticket->toArray());
     }
 
-    public function delete(int $id)
+    /*
+     * @return JsonResponse
+     * @param int $id
+     */
+    public function delete(int $id): JsonResponse
     {
         $this->service->delete($id);
         return response()->json(null, 204);
