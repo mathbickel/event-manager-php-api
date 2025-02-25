@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class OrganizerController extends Controller 
 {
     public function __construct(
-        protected OrganizerService $service
+        private OrganizerService $service
     ){}
 
     /**

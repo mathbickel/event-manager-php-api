@@ -18,11 +18,12 @@ class TicketModelToTicketDataAdapter
     public function toTicketData(): Ticket
     {
         return new Ticket(
-            $this->ticket->getId(),
-            $this->ticket->getEventId(),
-            $this->ticket->getPrice(),    
-            $this->ticket->getType(),
-            $this->ticket->getStatus()
+            $this->ticket->id,
+            $this->ticket->event_id,
+            $this->ticket->name,
+            $this->ticket->price,
+            $this->ticket->type,
+            $this->ticket->status
         );
     }
 }
