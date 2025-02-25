@@ -2,11 +2,10 @@
 
 namespace App\Notifications\Infra;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Notifications\Domain\NotificationsRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-class NotificationsRepositoryModel extends NotificationsRepository
+class NotificationsRepositoryModel implements NotificationsRepository
 {
     public function __construct(
         protected NotificationsModel $model
@@ -19,7 +18,7 @@ class NotificationsRepositoryModel extends NotificationsRepository
         return $this->model->all();
     }
     
-    public function find(int $id): ?NotificationsModel
+    public function getOne(int $id): NotificationsModel
     {
         return $this->model->find($id);
     }
@@ -29,15 +28,15 @@ class NotificationsRepositoryModel extends NotificationsRepository
         return $this->model->create($data);
     }
 
-    public function update(NotificationsModel $notification, array $data): NotificationsModel
+    public function update(array $data, $id): NotificationsModel
     {
+        $notification = $this->model->find($id);
         $notification->update($data);
         return $notification;
     }
 
-    public function delete(NotificationsModel $notification): void
+    public function delete(int $id): bool
     {
-        $notification->delete();
+        return $this->model->destroy($id);
     }
-
 }

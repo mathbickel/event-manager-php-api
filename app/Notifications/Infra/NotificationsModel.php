@@ -3,6 +3,7 @@
 namespace App\Notifications\Infra;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Attendee\Infra\AttendeeModel;
 
 class NotificationsModel extends Model
 {
@@ -10,9 +11,18 @@ class NotificationsModel extends Model
 
     protected $fillable = [
         'id',
-        'title',
-        'description',
-        'event_id',
-        'user_id',
+        'attendee_id',
+        'message',
+        'status'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function attendee()
+    {
+        return $this->belongsTo(AttendeeModel::class, 'attendee_id', 'id');
+    }
 }

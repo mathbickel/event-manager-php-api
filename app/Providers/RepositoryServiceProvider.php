@@ -32,6 +32,10 @@ use App\Attendee\Domain\AttendeeService;
 use App\Attendee\Domain\AttendeeRepository;
 use App\Attendee\Implementation\AttendeeServiceImpl;
 use App\Attendee\Infra\AttendeeRepositoryModel;
+use App\Notifications\Domain\NotificationsService;
+use App\Notifications\Implementation\NotificationsServiceImpl;
+use App\Notifications\Domain\NotificationsRepository;
+use App\Notifications\Infra\NotificationsRepositoryModel;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -81,6 +85,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Creator::class, AttendeeRepository::class);
         $this->app->bind(Updater::class, AttendeeRepository::class);
         $this->app->bind(Deleter::class, AttendeeRepository::class);
+
+        //NOTIFICATION BINDS
+        $this->app->bind(NotificationsService::class, NotificationsServiceImpl::class);
+        $this->app->bind(NotificationsRepository::class, NotificationsRepositoryModel::class);
+
+        $this->app->bind(Getter::class, NotificationsRepository::class);
+        $this->app->bind(Creator::class, NotificationsRepository::class);
+        $this->app->bind(Updater::class, NotificationsRepository::class);
+        $this->app->bind(Deleter::class, NotificationsRepository::class);
 
         //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {
