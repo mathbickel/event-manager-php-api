@@ -8,7 +8,6 @@ class CreateCommand
     ) {}
     public function execute(array $data)
     {
-        dd($this->repository);
         return $this->repository->create($data);
     }
 }

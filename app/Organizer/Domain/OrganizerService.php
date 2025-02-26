@@ -8,5 +8,5 @@ use App\Common\Updater;
 use App\Common\Deleter;
 interface OrganizerService extends Getter, Creator, Updater, Deleter
 {  
-
+    
 }
