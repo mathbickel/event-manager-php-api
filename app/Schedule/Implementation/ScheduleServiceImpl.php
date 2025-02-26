@@ -7,10 +7,12 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
+use App\Common\Helpers\Helper;
 use App\Schedule\Domain\Schedule;
 use App\Schedule\Domain\ScheduleService;
 use Illuminate\Database\Eloquent\Collection;
 use App\Schedule\Infra\Adapters\ScheduleModelToScheduleDataAdapter;
+use App\Schedule\Infra\ScheduleModel;
 
 class ScheduleServiceImpl implements ScheduleService
 {
@@ -47,6 +49,7 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function create(array $data): Schedule
     {
+        $this->validate($data);
         $model = $this->createCommand->execute($data);
         $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
         return $adapter->toScheduleData();
@@ -59,6 +62,7 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function update(array $data, int $id): Schedule
     {
+        $this->validate($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
         return $adapter->toScheduleData();
@@ -71,5 +75,10 @@ class ScheduleServiceImpl implements ScheduleService
     public function delete(int $id): bool
     {
         return $this->deleteCommand->execute($id);
+    }
+
+    private function validate(array $data)
+    {
+        Helper::validate($data, ScheduleModel::$rules);
     }
 }

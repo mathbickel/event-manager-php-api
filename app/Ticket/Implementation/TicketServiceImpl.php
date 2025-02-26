@@ -11,6 +11,8 @@ use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use App\Ticket\Infra\Adapters\TicketModelToTicketDataAdapter;
+use App\Ticket\Infra\TicketModel;
+use App\Common\Helpers\Helper;
 
 class TicketServiceImpl implements TicketService
 {
@@ -36,6 +38,7 @@ class TicketServiceImpl implements TicketService
 
     public function create(array $data): Ticket
     {
+        $this->validate($data);
         $model = $this->createCommand->execute($data);
         $adapter = TicketModelToTicketDataAdapter::getInstance($model);
         return $adapter->toTicketData();
@@ -43,6 +46,7 @@ class TicketServiceImpl implements TicketService
 
     public function update(array $data, int $id): Ticket
     {
+        $this->validate($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = TicketModelToTicketDataAdapter::getInstance($model);
         return $adapter->toTicketData();
@@ -51,5 +55,10 @@ class TicketServiceImpl implements TicketService
     public function delete(int $id): bool
     {
         return $this->deleteCommand->execute($id);
+    }
+
+    private function validate(array $data)
+    {
+        Helper::validate($data, TicketModel::$rules);
     }
 }

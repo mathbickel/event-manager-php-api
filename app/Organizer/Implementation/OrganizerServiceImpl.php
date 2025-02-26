@@ -10,9 +10,9 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
-use App\Common\Commands\RepositoryFactoryCommand;
-use App\Common\Helpers\Helpers;
 use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
+use App\Common\Helpers\Helper;
+use App\Organizer\Infra\OrganizerModel;
 
 class OrganizerServiceImpl implements OrganizerService
 {
@@ -41,6 +41,7 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function create(array $data): Organizer
     {
+        $this->validate($data);
         $model = $this->createCommand->execute($data);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -48,6 +49,7 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function update(array $data, int $id): Organizer
     {
+        $this->validate($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -56,5 +58,10 @@ class OrganizerServiceImpl implements OrganizerService
     public function delete(int $id): bool
     {
         return $this->deleteCommand->execute($id);
+    }
+
+    private function validate(array $data)
+    {
+        Helper::validate($data, OrganizerModel::$rules);
     }
 }

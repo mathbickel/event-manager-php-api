@@ -9,8 +9,7 @@ class ScheduleModelToScheduleDataAdapter
 {
     public function __construct(
         private ScheduleModel $schedule
-    ){
-    }
+    ) {}
 
     public static function getInstance(ScheduleModel $schedule): self
     {

@@ -12,7 +12,7 @@ class AttendeeModel extends Model
     /**
      * @var array Rules
      */
-    protected $rules = [
+    public static $rules = [
         'ticket_id' => 'required',
         'name' => 'required|max:50',
         'email' => 'required',

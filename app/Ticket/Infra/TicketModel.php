@@ -11,7 +11,7 @@ class TicketModel extends Model
     /**
      *  @var array Rules
      */
-    protected $rules = [
+    public static $rules = [
         'event_id' => 'required',
         'name' => 'required|unique:name|max:50',
         'type' => 'required',
