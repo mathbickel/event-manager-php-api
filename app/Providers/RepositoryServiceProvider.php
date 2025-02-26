@@ -45,55 +45,123 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrganizerService::class, OrganizerServiceImpl::class);
         $this->app->bind(OrganizerRepository::class, OrganizerRepositoryModel::class);
 
-        $this->app->bind(Getter::class, OrganizerRepository::class);
-        $this->app->bind(Creator::class, OrganizerRepository::class);
-        $this->app->bind(Updater::class, OrganizerRepository::class);
-        $this->app->bind(Deleter::class, OrganizerRepository::class);
+        $this->app->when(OrganizerServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(OrganizerRepository::class);
+
+        $this->app->when(OrganizerServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(OrganizerRepository::class);
+
+        $this->app->when(OrganizerServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(OrganizerRepository::class);
+
+        $this->app->when(OrganizerServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(OrganizerRepository::class);
 
         //EVENT BINDS
         $this->app->bind(EventService::class, EventServiceImpl::class);
         $this->app->bind(EventRepository::class, EventRepositoryModel::class);
 
-        $this->app->bind(Getter::class, EventRepository::class);
-        $this->app->bind(Creator::class, EventRepository::class);
-        $this->app->bind(Updater::class, EventRepository::class);
-        $this->app->bind(Deleter::class, EventRepository::class);
+        $this->app->when(EventServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(EventRepository::class);
+
+        $this->app->when(EventServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(EventRepository::class);
+
+        $this->app->when(EventServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(EventRepository::class);
+
+        $this->app->when(EventServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(EventRepository::class);
+
 
         //SCHEDULE BINDS
         $this->app->bind(ScheduleService::class, ScheduleServiceImpl::class);
         $this->app->bind(ScheduleRepository::class, ScheduleRepositoryModel::class);
 
-        $this->app->bind(Getter::class, ScheduleRepository::class);
-        $this->app->bind(Creator::class, ScheduleRepository::class);
-        $this->app->bind(Updater::class, ScheduleRepository::class);
-        $this->app->bind(Deleter::class, ScheduleRepository::class);
+        $this->app->when(ScheduleServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(ScheduleRepository::class);
+
+        $this->app->when(ScheduleServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(ScheduleRepository::class);
+
+        $this->app->when(ScheduleServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(ScheduleRepository::class);
+
+        $this->app->when(ScheduleServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(ScheduleRepository::class);
+    
 
         //TICKET BINDS
         $this->app->bind(TicketService::class, TicketServiceImpl::class);
         $this->app->bind(TicketRepository::class, TicketRepositoryModel::class);
 
-        $this->app->bind(Getter::class, TicketRepository::class);
-        $this->app->bind(Creator::class, TicketRepository::class);
-        $this->app->bind(Updater::class, TicketRepository::class);
-        $this->app->bind(Deleter::class, TicketRepository::class);
+        $this->app->when(TicketServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(TicketRepository::class);
+
+        $this->app->when(TicketServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(TicketRepository::class);
+
+        $this->app->when(TicketServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(TicketRepository::class);
+
+        $this->app->when(TicketServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(TicketRepository::class);
 
         //ATTENDEE BINDS
         $this->app->bind(AttendeeService::class, AttendeeServiceImpl::class);
         $this->app->bind(AttendeeRepository::class, AttendeeRepositoryModel::class);
 
-        $this->app->bind(Getter::class, AttendeeRepository::class);
-        $this->app->bind(Creator::class, AttendeeRepository::class);
-        $this->app->bind(Updater::class, AttendeeRepository::class);
-        $this->app->bind(Deleter::class, AttendeeRepository::class);
+        $this->app->when(AttendeeServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(AttendeeRepository::class);
+
+        $this->app->when(AttendeeServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(AttendeeRepository::class);
+
+        $this->app->when(AttendeeServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(AttendeeRepository::class);
+
+        $this->app->when(AttendeeServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(AttendeeRepository::class);
 
         //NOTIFICATION BINDS
         $this->app->bind(NotificationsService::class, NotificationsServiceImpl::class);
         $this->app->bind(NotificationsRepository::class, NotificationsRepositoryModel::class);
 
-        $this->app->bind(Getter::class, NotificationsRepository::class);
-        $this->app->bind(Creator::class, NotificationsRepository::class);
-        $this->app->bind(Updater::class, NotificationsRepository::class);
-        $this->app->bind(Deleter::class, NotificationsRepository::class);
+        $this->app->when(NotificationsServiceImpl::class)
+            ->needs(Getter::class)
+            ->give(NotificationsRepository::class);
+
+        $this->app->when(NotificationsServiceImpl::class)
+            ->needs(Creator::class)
+            ->give(NotificationsRepository::class);
+
+        $this->app->when(NotificationsServiceImpl::class)
+            ->needs(Updater::class)
+            ->give(NotificationsRepository::class);
+
+        $this->app->when(NotificationsServiceImpl::class)
+            ->needs(Deleter::class)
+            ->give(NotificationsRepository::class);
 
         //COMMANDS BINDS
         $this->app->bind(GetAllCommand::class, function ($app) {
