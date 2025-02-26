@@ -11,7 +11,7 @@ class OrganizerModel extends Model
     /**
      * @var array Rules
      */
-    protected $rules = [
+    public static $rules = [
         'name' => 'required|max:50',
         'email' => 'required',
         'phone_number' => 'required|string|min:10|max:13',

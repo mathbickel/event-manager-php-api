@@ -12,7 +12,7 @@ class NotificationsModel extends Model
     /**
      * @var array Rules
      */
-    protected $rules = [
+    public static $rules = [
         'attendee_id' => 'required',
         'message' => 'required|string|max:255',
         'status' => 'required|string|in:sended,not_sended',

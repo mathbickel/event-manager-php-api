@@ -12,7 +12,7 @@ class ScheduleModel extends Model
     /**
      * @var array Rules
      */
-    protected $rules = [
+    public static $rules = [
         'event_id' => 'required',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i',
