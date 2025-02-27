@@ -13,6 +13,8 @@ use App\Schedule\Domain\ScheduleService;
 use Illuminate\Database\Eloquent\Collection;
 use App\Schedule\Infra\Adapters\ScheduleModelToScheduleDataAdapter;
 use App\Schedule\Infra\ScheduleModel;
+use App\Common\Error\Error;
+use Exception;
 
 class ScheduleServiceImpl implements ScheduleService
 {
@@ -22,7 +24,7 @@ class ScheduleServiceImpl implements ScheduleService
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
         private DeleteCommand $deleteCommand
-    ){}
+    ) {}
 
     /**
      * @return Collection
@@ -35,9 +37,11 @@ class ScheduleServiceImpl implements ScheduleService
     /**
      * @param int $id
      * @return Schedule
+     * @throws Exception
      */
-    public function getOne(int $id): Schedule
+    public function getOne(int $id): ?Schedule
     {
+        $this->ifNotExists($id);
         $model = $this->getOneCommand->execute($id);
         $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
         return $adapter->toScheduleData();
@@ -59,10 +63,12 @@ class ScheduleServiceImpl implements ScheduleService
      * @param int $id
      * @param array $data
      * @return Schedule
+     * @throws Exception
      */
-    public function update(array $data, int $id): Schedule
+    public function update(array $data, int $id): ?Schedule
     {
-        $this->validate($data);
+        $this->ifNotExists($id);
+        $this->validateEdit($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
         return $adapter->toScheduleData();
@@ -71,14 +77,26 @@ class ScheduleServiceImpl implements ScheduleService
     /**
      * @param int $id
      * @return void
+     * @throws Exception
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->deleteCommand->execute($id);
+        $this->ifNotExists($id);
+        $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)
     {
         Helper::validate($data, ScheduleModel::$rules);
+    }
+
+    private function validateEdit(array $data)
+    {
+        Helper::validateEdit($data, ScheduleModel::$rules);
+    }
+
+    private function ifNotExists(int $id)
+    {
+        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['schedule_id' => $id]);
     }
 }

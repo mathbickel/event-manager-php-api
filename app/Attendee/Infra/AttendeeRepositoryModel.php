@@ -12,30 +12,50 @@ class AttendeeRepositoryModel implements AttendeeRepository
         protected AttendeeModel $attendee
     ) {}
 
+    /**
+     * @return Collection
+     */  
     public function getAll(): Collection
     {
         return $this->attendee->all();
     }
 
-    public function getOne(int $id): AttendeeModel
+    /**
+     * @param int $id
+     * @return ?AttendeeModel
+     */
+    public function getOne(int $id): ?AttendeeModel
     {
         return $this->attendee->find($id);
     }
 
+    /**
+     * @param array $data
+     * @return AttendeeModel
+     */
     public function create(array $data): AttendeeModel
     {
         return $this->attendee->create($data);
     }
 
-    public function update(array $data, int $id): AttendeeModel
+    /**
+     * @param array $data
+     * @param int $id
+     * @return ?AttendeeModel
+     */
+    public function update(array $data, int $id): ?AttendeeModel
     {
         $attendee = $this->attendee->find($id);
         $attendee->update($data);
         return $attendee;
     }
 
-    public function delete(int $id): bool
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function delete(int $id): void
     {
-        return $this->attendee->destroy($id);
+        $this->attendee->destroy($id);
     }
 }

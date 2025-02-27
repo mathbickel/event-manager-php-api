@@ -24,7 +24,6 @@ class ValidatorService
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {
-        dd($rules);
         $validator = Validator::make($data, $rules, $messages, $customAttributes);
 
         if ($validator->fails()) {

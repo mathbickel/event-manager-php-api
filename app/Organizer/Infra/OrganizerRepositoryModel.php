@@ -10,9 +10,8 @@ class OrganizerRepositoryModel implements OrganizerRepository
 {
     public function __construct(
         protected OrganizerModel $organizer
-    ){
-        $this->organizer = $organizer;   
-    }
+    ) {}
+    
     /**
      * @return Collection
      */
@@ -46,17 +45,16 @@ class OrganizerRepositoryModel implements OrganizerRepository
      */
     public function update(array $data, int $id): ?OrganizerModel
     {
-        // if(!$this->organizer->find($id)) return null;
         $this->organizer->find($id)->update($data);
         return $this->organizer->find($id);
     }
 
     /**
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->organizer->find($id)->delete();
+        $this->organizer->find($id)->delete();
     }
 }

@@ -9,7 +9,7 @@ class EventRepositoryModel implements EventRepository
 {
     public function __construct(
         protected EventModel $event
-    ){}
+    ) {}
 
     /**
      * @return EventModel[]|Collection
@@ -21,9 +21,9 @@ class EventRepositoryModel implements EventRepository
 
     /**
      * @param int $id
-     * @return EventModel
+     * @return ?EventModel
      */
-    public function getOne(int $id): EventModel
+    public function getOne(int $id): ?EventModel
     {
         return $this->event->find($id);
     }
@@ -40,9 +40,9 @@ class EventRepositoryModel implements EventRepository
     /**
      * @param array $data
      * @param int $id
-     * @return EventModel
+     * @return ?EventModel
      */
-    public function update(array $data, int $id): EventModel
+    public function update(array $data, int $id): ?EventModel
     {
         $this->event->find($id)->update($data);
         return $this->event->find($id);
@@ -50,11 +50,10 @@ class EventRepositoryModel implements EventRepository
 
     /**
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->event->find($id)->delete();
+        $this->event->find($id)->delete();
     }
-
 }

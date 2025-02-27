@@ -7,12 +7,14 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
+use App\Common\Error\Error;
 use App\Common\Helpers\Helper;
 use App\Event\Domain\Event;
 use App\Event\Domain\EventService;
 use App\Event\Infra\Adapters\EventModelToEventDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
 use App\Event\Infra\EventModel;
+use Exception;
 
 class EventServiceImpl implements EventService
 {
@@ -35,9 +37,11 @@ class EventServiceImpl implements EventService
     /**
      * @param int $id
      * @return Event
+     * @throws Exception
      */
     public function getOne(int $id): Event
     {
+        $this->ifNotExists($id);
         $model = $this->getOneCommand->execute($id);
         $adapter = EventModelToEventDataAdapter::getInstance($model);
         return $adapter->toEventData();
@@ -59,10 +63,12 @@ class EventServiceImpl implements EventService
      * @param array $data
      * @param int $id
      * @return Event
+     * @throws Exception
      */
     public function update(array $data, int $id): Event
     {
-        $this->validate($data);
+        $this->ifNotExists($id);
+        $this->validateEdit($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = EventModelToEventDataAdapter::getInstance($model);
         return $adapter->toEventData();
@@ -70,16 +76,28 @@ class EventServiceImpl implements EventService
 
     /**
      * @param int $id
-     * @return bool
+     * @return void
+     * @throws Exception
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->deleteCommand->execute($id);
+        $this->ifNotExists($id);
+        $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)
     {
         Helper::validate($data, EventModel::$rules);
+    }
+
+    private function validateEdit(array $data)
+    {
+        Helper::validateEdit($data, EventModel::$rules);
+    }
+    
+    private function ifNotExists(int $id)
+    {
+        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['event_id' => $id]);
     }
 }
 
