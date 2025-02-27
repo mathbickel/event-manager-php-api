@@ -9,31 +9,50 @@ class ScheduleRepositoryModel implements ScheduleRepository
 {
     public function __construct(
         private ScheduleModel $schedule
-    ){
-        $this->schedule = $schedule;
-    }
+    ) {}
+
+    /**
+     * @return Collection
+     */
     public function getAll(): Collection
     {
         return ScheduleModel::all();
     }
 
-    public function getOne(int $id): ScheduleModel
+    /**
+     * @param int $id
+     * @return ?ScheduleModel
+     */
+    public function getOne(int $id): ?ScheduleModel
     {
         return ScheduleModel::find($id);
     }
 
+    /**
+     * @param array $data
+     * @return ScheduleModel
+     */
     public function create(array $data): ScheduleModel
     {
         return ScheduleModel::create($data);
     }
 
-    public function update(array $data, int $id): ScheduleModel  {
+    /**
+     * @param array $data
+     * @param int $id
+     * @return ?ScheduleModel
+     */
+    public function update(array $data, int $id): ?ScheduleModel  {
         $this->schedule->find($id)->update($data);
         return $this->schedule->find($id);
     }
 
-    public function delete(int $id): bool
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function delete(int $id): void
     {
-        return ScheduleModel::destroy($id);
+        ScheduleModel::destroy($id);
     }
 }

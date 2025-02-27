@@ -18,6 +18,12 @@ class Helper
         return ValidatorService::getInstance()->validate($data, $rules, $messages, $customAttributes);
     }
 
+    /**
+     * @param array $data
+     * @param array $messages
+     * @param array $customAttributes
+     * @return array
+     */
     public static function validateEdit(array $data, array $messages = [], array $customAttributes = []): array
     {
         return ValidatorService::getInstance()->validateEdit($data, $messages, $customAttributes);

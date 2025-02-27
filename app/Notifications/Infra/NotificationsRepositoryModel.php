@@ -9,34 +9,52 @@ class NotificationsRepositoryModel implements NotificationsRepository
 {
     public function __construct(
         protected NotificationsModel $model
-    ){
-        $this->model = $model;
-    }
+    ) {}
 
+    /**
+     * @return Collection
+     */
     public function getAll(): collection
     {
         return $this->model->all();
     }
     
-    public function getOne(int $id): NotificationsModel
+    /**
+     * @param int $id
+     * @return ?NotificationsModel
+     */
+    public function getOne(int $id): ?NotificationsModel
     {
         return $this->model->find($id);
     }
 
+    /**
+     * @param array $data
+     * @return NotificationsModel
+     */
     public function create(array $data): NotificationsModel
     {
         return $this->model->create($data);
     }
 
-    public function update(array $data, $id): NotificationsModel
+    /**
+     * @param array $data
+     * @param int $id
+     * @return ?NotificationsModel
+     */
+    public function update(array $data, $id): ?NotificationsModel
     {
         $notification = $this->model->find($id);
         $notification->update($data);
         return $notification;
     }
 
-    public function delete(int $id): bool
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function delete(int $id): void
     {
-        return $this->model->destroy($id);
+        $this->model->destroy($id);
     }
 }

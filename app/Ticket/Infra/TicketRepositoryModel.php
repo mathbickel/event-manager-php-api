@@ -10,8 +10,7 @@ class TicketRepositoryModel implements TicketRepository
 {
     public function __construct(
         private TicketModel $ticket
-    )
-    {}
+    ) {}
 
     /**
      * @return Collection
@@ -25,7 +24,7 @@ class TicketRepositoryModel implements TicketRepository
      * @param int $id
      * @return TicketModel
      */
-    public function getOne(int $id): TicketModel
+    public function getOne(int $id): ?TicketModel
     {
         return $this->ticket->find($id);
     }
@@ -42,9 +41,9 @@ class TicketRepositoryModel implements TicketRepository
     /**
      * @param array $data
      * @param int $id
-     * @return TicketModel
+     * @return ?TicketModel
      */
-    public function update(array $data, int $id): TicketModel
+    public function update(array $data, int $id): ?TicketModel
     {
         $this->ticket->find($id)->update($data);
         return $this->ticket->find($id);
@@ -52,10 +51,10 @@ class TicketRepositoryModel implements TicketRepository
 
     /**
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->ticket->find($id)->delete();
+        $this->ticket->find($id)->delete();
     }
 }

@@ -34,14 +34,23 @@ class OrganizerServiceImpl implements OrganizerService
         return $this->getAllCommand->execute();
     }
 
+    /**
+     * @param int $id
+     * @return Organizer
+     * @throws Exception
+     */
     public function getOne(int $id): Organizer
     {
-        $model = $this->getOneCommand->execute($id);
         $this->ifNotExists($id);
+        $model = $this->getOneCommand->execute($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
     }
 
+    /**
+     * @param array $data
+     * @return Organizer
+     */
     public function create(array $data): Organizer
     {
         $this->validate($data);
@@ -50,6 +59,12 @@ class OrganizerServiceImpl implements OrganizerService
         return $adapter->toOrganizerData();
     }
 
+    /**
+     * @param array $data
+     * @param int $id
+     * @return Organizer
+     * @throws Exception
+     */
     public function update(array $data, int $id): Organizer
     {
         $this->validateEdit($data);
@@ -59,10 +74,15 @@ class OrganizerServiceImpl implements OrganizerService
         return $adapter->toOrganizerData();
     }
 
-    public function delete(int $id): bool
+    /**
+     * @param int $id
+     * @return void
+     * @throws Exception
+     */
+    public function delete(int $id): void
     {
         $this->ifNotExists($id);
-        return $this->deleteCommand->execute($id);
+        $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)

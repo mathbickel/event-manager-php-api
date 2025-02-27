@@ -6,7 +6,7 @@ interface Deleter
 {
     /**
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function delete(int $id): bool;
+    public function delete(int $id): void;
 }

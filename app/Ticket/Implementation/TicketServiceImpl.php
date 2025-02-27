@@ -13,6 +13,8 @@ use App\Common\Commands\DeleteCommand;
 use App\Ticket\Infra\Adapters\TicketModelToTicketDataAdapter;
 use App\Ticket\Infra\TicketModel;
 use App\Common\Helpers\Helper;
+use App\Common\Error\Error;
+use Exception;
 
 class TicketServiceImpl implements TicketService
 {
@@ -24,19 +26,32 @@ class TicketServiceImpl implements TicketService
         private DeleteCommand $deleteCommand
     ){}
 
+    /**
+     * @return Collection
+     */
     public function getAll(): Collection
     {
         return $this->getAllCommand->execute();
     }
 
+    /**
+     * @param int $id
+     * @return Ticket
+     * @throws Exception
+     */
     public function getOne(int $id): Ticket
     {
+        $this->ifNotExists($id);
         $model = $this->getOneCommand->execute($id);
         $adapter = TicketModelToTicketDataAdapter::getInstance($model);
         return $adapter->toTicketData();
     }
 
-    public function create(array $data): Ticket
+    /**
+     * @param array $data
+     * @return Ticket
+     */
+    public function create(array $data): ?Ticket
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
@@ -44,21 +59,44 @@ class TicketServiceImpl implements TicketService
         return $adapter->toTicketData();
     }
 
-    public function update(array $data, int $id): Ticket
+    /**
+     * @param array $data
+     * @param int $id
+     * @return Ticket
+     * @throws Exception
+     */
+    public function update(array $data, int $id): ?Ticket
     {
-        $this->validate($data);
+        $this->ifNotExists($id);
+        $this->validateEdit($data);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = TicketModelToTicketDataAdapter::getInstance($model);
         return $adapter->toTicketData();
     }
 
-    public function delete(int $id): bool
+    /**
+     * @param int $id
+     * @return void
+     * @throws Exception
+     */
+    public function delete(int $id): void
     {
-        return $this->deleteCommand->execute($id);
+        $this->ifNotExists($id);
+        $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)
     {
         Helper::validate($data, TicketModel::$rules);
+    }
+
+    private function validateEdit(array $data)
+    {
+        Helper::validateEdit($data, TicketModel::$rules);
+    }
+
+    private function ifNotExists(int $id)
+    {
+        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['ticket_id' => $id]);
     }
 }

@@ -3,17 +3,28 @@
 namespace App\Notifications\Implementation;
 
 use App\Notifications\Domain\Notifications;
-use App\Notifications\Domain\NotificationsRepository;
 use App\Notifications\Domain\NotificationsService;
 use App\Notifications\Infra\Adapters\NotificationsModelToNotificationsDataAdapter;
 use App\Notifications\Infra\NotificationsModel;
 use Illuminate\Database\Eloquent\Collection;
 use App\Common\Helpers\Helper;
+use App\Common\Error\Error;
+use App\Common\Commands\GetAllCommand;
+use App\Common\Commands\GetOneCommand;
+use App\Common\Commands\CreateCommand;
+use App\Common\Commands\UpdateCommand;
+use App\Common\Commands\DeleteCommand;
+use Exception;
+
 
 class NotificationsServiceImpl implements NotificationsService
 {
     public function __construct(
-        private NotificationsRepository $notificationsRepository
+        private GetAllCommand $getAllCommand,
+        private GetOneCommand $getOneCommand,
+        private CreateCommand $createCommand,
+        private UpdateCommand $updateCommand,
+        private DeleteCommand $deleteCommand
     ) {}
 
     /**
@@ -21,16 +32,18 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function getAll(): Collection
     {
-        return $this->notificationsRepository->getAll();
+        return $this->getAllCommand->execute();
     }
 
     /**
      * @param int $id
-     * @return Notifications
+     * @return ?Notifications
+     * @throws Exception
      */
-    public function getOne(int $id): Notifications
+    public function getOne(int $id): ?Notifications
     {
-        $model = $this->notificationsRepository->getOne($id);
+        $this->ifNotExists($id);
+        $model = $this->getOneCommand->execute($id);
         $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
         return $adapter->NotificationsData();
     }
@@ -42,7 +55,7 @@ class NotificationsServiceImpl implements NotificationsService
     public function create(array $data): Notifications
     {
         $this->validate($data);
-        $model = $this->notificationsRepository->create($data);
+        $model = $this->createCommand->execute($data);
         $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
         return $adapter->NotificationsData();
     }
@@ -50,12 +63,14 @@ class NotificationsServiceImpl implements NotificationsService
     /**
      * @param array $data
      * @param int $id
-     * @return Notifications
+     * @return ?Notifications
+     * @throws Exception
      */
-    public function update(array $data, int $id): Notifications
+    public function update(array $data, int $id): ?Notifications
     {
-        $this->validate($data);
-        $model = $this->notificationsRepository->update($data, $id);
+        $this->ifNotExists($id);
+        $this->validateEdit($data);
+        $model = $this->updateCommand->execute($data, $id);
         $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
         return $adapter->NotificationsData();
     }
@@ -63,14 +78,26 @@ class NotificationsServiceImpl implements NotificationsService
     /**
      * @param int $id
      * @return void
+     * @throws Exception
      */
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
-        return $this->notificationsRepository->delete($id);
+        $this->ifNotExists($id);
+        $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)
     {
         Helper::validate($data, NotificationsModel::$rules);
+    }
+
+    private function validateEdit(array $data)
+    {
+        Helper::validateEdit($data, NotificationsModel::$rules);
+    }
+
+    private function ifNotExists(int $id)
+    {
+        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['notification_id' => $id]);
     }
 }

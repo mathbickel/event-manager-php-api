@@ -18,7 +18,7 @@ class ExceptionFactory
             case 'Resource not found':
                 return new NotFoundException($message, $data);
             default:
-                return new BaseException(500, $data);
+                return new BaseException($message, 500, $data);
         }
     }
 }
