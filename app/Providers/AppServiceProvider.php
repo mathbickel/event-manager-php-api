@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Common\Error\ErrorService;
 use Illuminate\Support\ServiceProvider;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('error', function () {
+            return new ErrorService();
+        });
     }
 
     /**

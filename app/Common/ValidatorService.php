@@ -24,10 +24,29 @@ class ValidatorService
      */
     public function validate(array $data, array $rules, array $messages = [], array $customAttributes = []): array
     {
+        dd($rules);
         $validator = Validator::make($data, $rules, $messages, $customAttributes);
 
         if ($validator->fails()) {
-            throw new \Exception($validator->errors()->first());
+            throw new \Exception($validator->errors()->first(), 422);
+        }
+
+        return $validator->validated();
+    }
+
+    public function validateEdit(array $data, array $rules, array $messages = [], array $customAttributes = [])
+    {
+        $editedRules = [];
+        foreach ($data as $key => $values) {
+            if(isset($rules[$key])) {
+                $editedRules[$key] = $rules[$key];
+            }
+        }
+
+        $validator = Validator::make($data, $editedRules, $messages, $customAttributes);
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first(), 422);
         }
 
         return $validator->validated();
