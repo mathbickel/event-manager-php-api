@@ -24,22 +24,23 @@ class OrganizerController extends Controller
 
     /**     
      * @return JsonResponse
+     * @param int $id
+     */
+    public function show(int $id): JsonResponse
+    {
+        
+        $organizer = $this->service->getOne($id);
+        return response()->json($organizer->toArray());
+    }
+
+    /**     
+     * @return JsonResponse
      * @param Request $request
      */
     public function store(Request $request): JsonResponse
     {
         $organizer = $this->service->create($request->all());
         return response()->json($organizer->toArray(), 201);
-    }
-
-    /**     
-     * @return JsonResponse
-     * @param int $id
-     */
-    public function show(int $id): JsonResponse
-    {
-        $organizer = $this->service->getOne($id);
-        return response()->json($organizer->toArray());
     }
 
     /**     

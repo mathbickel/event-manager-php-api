@@ -10,9 +10,11 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
-use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
+use App\Common\Error\Error;
 use App\Common\Helpers\Helper;
+use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
 use App\Organizer\Infra\OrganizerModel;
+use Exception;
 
 class OrganizerServiceImpl implements OrganizerService
 {
@@ -35,6 +37,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function getOne(int $id): Organizer
     {
         $model = $this->getOneCommand->execute($id);
+        $this->ifNotExists($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
     }
@@ -49,7 +52,8 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function update(array $data, int $id): Organizer
     {
-        $this->validate($data);
+        $this->validateEdit($data);
+        $this->ifNotExists($id);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -57,11 +61,22 @@ class OrganizerServiceImpl implements OrganizerService
 
     public function delete(int $id): bool
     {
+        $this->ifNotExists($id);
         return $this->deleteCommand->execute($id);
     }
 
     private function validate(array $data)
     {
         Helper::validate($data, OrganizerModel::$rules);
+    }
+
+    private function validateEdit(array $data)
+    {
+        Helper::validateEdit($data, OrganizerModel::$rules);
+    }
+
+    private function ifNotExists(int $id)
+    {
+        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['organizer_id' => $id]);
     }
 }

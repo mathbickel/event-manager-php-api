@@ -25,28 +25,28 @@ class OrganizerRepositoryModel implements OrganizerRepository
      * @param int $id
      * @return OrganizerModel
      */
-    public function getOne(int $id): OrganizerModel
+    public function getOne(int $id): ?OrganizerModel
     {
         return $this->organizer->find($id);
     }
 
     /**
      * @param array $data
-     * @return Organizer
-     */
+     * @return OrganizerModel
+    */
     public function create(array $data): OrganizerModel
     {
-        // dd($data);
         return $this->organizer->create($data);
     }
 
     /**
      * @param array $data
      * @param int $id
-     * @return Organizer
+     * @return OrganizerModel
      */
-    public function update(array $data, int $id): OrganizerModel
+    public function update(array $data, int $id): ?OrganizerModel
     {
+        // if(!$this->organizer->find($id)) return null;
         $this->organizer->find($id)->update($data);
         return $this->organizer->find($id);
     }
