@@ -3,22 +3,12 @@
 namespace App\Common\Cache\Redis;
 
 use App\Common\Cache\CacheRepository;
-use Predis\Client;
+use App\Common\Cache\Client\CacheClient;
 class CacheRedisRepository implements CacheRepository
 {
     public function __construct(
-        private Client $client
+        private CacheClient $client
     ) {}
-
-    /**
-     * @return Client
-     * @throws onnectionException
-     * @throws ServerException
-     */
-    public function getClient(): Client
-    {
-        return $this->client;
-    }
 
     /**
      * @return ConnectionInterface

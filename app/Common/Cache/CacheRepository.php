@@ -10,13 +10,6 @@ use Predis\Connection\ConnectionInterface;
 interface CacheRepository
 {
     /**
-     * @return T
-     * @throws ConnectionException
-     * @throws ServerException
-     */
-    public function getClient();
-
-    /**
      * @return ConnectionInterface
      * @throws ConnectionException
      * @throws ServerException
