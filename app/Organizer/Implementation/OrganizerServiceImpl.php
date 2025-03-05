@@ -31,7 +31,7 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        
+    
         return $this->getAllCommand->execute();
     }
 
