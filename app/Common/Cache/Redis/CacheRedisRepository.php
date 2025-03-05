@@ -4,18 +4,18 @@ namespace App\Common\Cache\Redis;
 
 use App\Common\Cache\CacheRepository;
 use App\Common\Cache\Client\CacheClient;
+use Predis;
 class CacheRedisRepository implements CacheRepository
 {
     public function __construct(
         private CacheClient $client
-    ) {}
+    ) {
+        $this->client->getConnection();
+    }
 
-    /**
-     * @return ConnectionInterface
-     */
-    public function getConnection()
+    private function connection()
     {
-        return $this->client->getConnection();
+        return new Predis\Client($this->client->getConnection());
     }
 
     /**
@@ -26,11 +26,11 @@ class CacheRedisRepository implements CacheRepository
      * @throws Exception
      */
     public function set(string $key, $value, ?int $ttl = null): void
-    {
-        $this->client->set($key, $value, $ttl);
-
+    {   
+        $connection = $this->connection();
+        $connection->set($key, $value);
         if ($ttl !== null) {
-            $this->client->expire($key, $ttl);
+            $connection->expire($key, $ttl);
         }
     }
 
@@ -41,7 +41,7 @@ class CacheRedisRepository implements CacheRepository
      */
     public function get(string $key)
     {
-        return $this->client->get($key);
+        return $this->connection()->get($key);
     }
 
     /**
@@ -52,6 +52,6 @@ class CacheRedisRepository implements CacheRepository
 
     public function delete(string $key)
     {
-        $this->client->del($key);
+        $this->connection()->del($key);
     }
 }

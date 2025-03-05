@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Common\Cache\Client\CacheClient;
 use Illuminate\Support\ServiceProvider;
 use Predis\Client;
+use App\Common\Cache\Redis\CacheRedisRepository;
+use App\Common\Cache\CacheRepository;
 
 class CacheProviderService extends ServiceProvider
 {
@@ -20,6 +22,11 @@ class CacheProviderService extends ServiceProvider
 
             $redisClient = new Client($redisConfig);
             return new CacheClient($redisClient);
+        });
+
+        $this->app->bind(CacheRepository::class, CacheRedisRepository::class);
+        $this->app->bind(CacheRepository::class, function ($app) {
+            return new CacheRepository($app->make(CacheRedisRepository::class));
         });
     }
 }
