@@ -12,9 +12,22 @@ class CacheRedisRepository implements CacheRepository
         private CacheClient $client
     ) {}
 
+    /**
+     * @return Client
+     */
     private function connection(): Client
     {
         return $this->client->getClient();
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     * @throws Exception
+     */
+    public function get(string $key)
+    {
+        return $this->connection()->get($key);
     }
 
     /**
@@ -31,16 +44,6 @@ class CacheRedisRepository implements CacheRepository
         if ($ttl !== null) {
             $connection->expire($key, $ttl);
         }
-    }
-
-    /**
-     * @param string $key
-     * @return mixed
-     * @throws Exception
-     */
-    public function get(string $key)
-    {
-        return $this->connection()->get($key);
     }
 
     /**
