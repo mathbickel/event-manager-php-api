@@ -14,7 +14,7 @@ class CacheClient
     /**
      * @return ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->client->getConnection();
     }

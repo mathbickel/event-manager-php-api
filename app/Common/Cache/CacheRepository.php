@@ -3,9 +3,6 @@
 namespace App\Common\Cache;
 
 use Exception;
-use Predis\Connection\ConnectionException;
-use Predis\Connection\ServerException;
-use Predis\Connection\ConnectionInterface;
 
 interface CacheRepository
 {
@@ -31,4 +28,11 @@ interface CacheRepository
      * @throws Exception
      */
     public function delete(string $key);
+
+    /**
+     * @param string $key
+     * @return bool
+     * @throws Exception
+     */
+    public function has(string $key): bool;
 }

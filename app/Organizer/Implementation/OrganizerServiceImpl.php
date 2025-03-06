@@ -2,6 +2,7 @@
 
 namespace App\Organizer\Implementation;
 
+use App\Common\Cache\CacheRepository;
 use App\Organizer\Domain\Organizer;
 use App\Organizer\Domain\OrganizerService;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +24,8 @@ class OrganizerServiceImpl implements OrganizerService
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private CacheRepository $cacheRepository
     ){}
 
     /**
@@ -31,7 +33,8 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-    
+        $this->cacheRepository->set('organizers', $this->getAllCommand->execute(), 3600);
+        if($this->cacheRepository->has('organizers')) return $this->cacheRepository->get('organizers');
         return $this->getAllCommand->execute();
     }
 
