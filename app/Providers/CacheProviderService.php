@@ -25,8 +25,5 @@ class CacheProviderService extends ServiceProvider
         });
 
         $this->app->bind(CacheRepository::class, CacheRedisRepository::class);
-        $this->app->bind(CacheRepository::class, function ($app) {
-            return new CacheRepository($app->make(CacheRedisRepository::class));
-        });
     }
 }
