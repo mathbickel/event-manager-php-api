@@ -14,10 +14,10 @@ class CacheProviderService extends ServiceProvider
     {
         $this->app->singleton(CacheClient::class, function ($app) {
             $redisConfig = [
-                'host' => env('REDIS_HOST', '127.0.0.1'),
-                'port' => env('REDIS_PORT', 6379),
-                'database' => env('REDIS_DB', 0),
-                'password' => env('REDIS_PASSWORD', null),
+                'host' => env('REDIS_HOST'),
+                'port' => env('REDIS_PORT'),
+                'database' => env('REDIS_DB'),
+                'password' => env('REDIS_PASSWORD'),
             ];
 
             $redisClient = new Client($redisConfig);
