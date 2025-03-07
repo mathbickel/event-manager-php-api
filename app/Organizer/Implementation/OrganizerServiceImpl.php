@@ -33,8 +33,8 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
+        if($this->cacheRepository->has('organizers')) return Collection::make(json_decode($this->cacheRepository->get('organizers')));
         $this->cacheRepository->set('organizers', $this->getAllCommand->execute(), 3600);
-        if($this->cacheRepository->has('organizers')) return $this->cacheRepository->get('organizers');
         return $this->getAllCommand->execute();
     }
 
