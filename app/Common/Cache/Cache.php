@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Common\Error;
+namespace App\Common\Cache;
+
 use Illuminate\Support\Facades\Facade;
 
-class Error extends Facade
+class Cache extends Facade
 {
-    /**
-     * @return string
-     */
     protected static function getFacadeAccessor(): string
     {
-        return 'error';
+        return 'cache';
     }
 }
