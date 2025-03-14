@@ -2,6 +2,7 @@
 
 namespace App\Organizer\Implementation;
 
+use App\Common\Cache\Cache;
 use App\Common\Cache\CacheRepository;
 use App\Organizer\Domain\Organizer;
 use App\Organizer\Domain\OrganizerService;
@@ -13,6 +14,8 @@ use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use App\Common\Error\Error;
 use App\Common\Helpers\Helper;
+use App\Common\ValidatorService;
+use App\Exceptions\NotFoundException;
 use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
 use App\Organizer\Infra\OrganizerModel;
 use Exception;
@@ -25,7 +28,8 @@ class OrganizerServiceImpl implements OrganizerService
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
         private DeleteCommand $deleteCommand,
-        private CacheRepository $cacheRepository
+        private CacheRepository $CacheRepository,
+        private ValidatorService $validator
     ){}
 
     /**
@@ -33,9 +37,10 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        if($this->cacheRepository->has('organizers')) return Collection::make(json_decode($this->cacheRepository->get('organizers')));
-        $this->cacheRepository->set('organizers', $this->getAllCommand->execute(), 3600);
-        return $this->getAllCommand->execute();
+        if($this->hasCache()) return $this->getFromCache();
+        $data = $this->getAllCommand->execute();
+        $this->setCache($data);
+        return $data;
     }
 
     /**
@@ -45,7 +50,7 @@ class OrganizerServiceImpl implements OrganizerService
      */
     public function getOne(int $id): Organizer
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $model = $this->getOneCommand->execute($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -72,7 +77,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function update(array $data, int $id): Organizer
     {
         $this->validateEdit($data);
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $model = $this->updateCommand->execute($data, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -85,22 +90,58 @@ class OrganizerServiceImpl implements OrganizerService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
 
+    /**
+     * @param array $data
+     */
     private function validate(array $data)
     {
-        Helper::validate($data, OrganizerModel::$rules);
+        $this->validator->validate($data, OrganizerModel::$rules);
     }
 
+    /**
+     * @param array $data
+     */
     private function validateEdit(array $data)
     {
-        Helper::validateEdit($data, OrganizerModel::$rules);
+        $this->validator->validateEdit($data, OrganizerModel::$rules);
     }
 
-    private function ifNotExists(int $id)
+    /**
+     * @param int $id
+     * @return void
+     * @throws Exception
+     */
+    private function failIfNotExists(int $id): void
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['organizer_id' => $id]);
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasCache(): bool
+    {
+        return $this->CacheRepository->has('organizers');
+    }
+
+    /**
+     * @return Collection
+     */
+    private function getFromCache(): Collection
+    {
+        return Collection::make($this->CacheRepository->get('organizers'));
+    }
+
+    /**
+     * @param Collection $organizer
+     * @return void
+     */
+    private function setCache(Collection $organizer): void
+    {
+        $this->CacheRepository->set('organizers', $organizer, 3600);
     }
 }

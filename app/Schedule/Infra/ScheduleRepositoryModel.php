@@ -42,7 +42,8 @@ class ScheduleRepositoryModel implements ScheduleRepository
      * @param int $id
      * @return ?ScheduleModel
      */
-    public function update(array $data, int $id): ?ScheduleModel  {
+    public function update(array $data, int $id): ?ScheduleModel  
+    {
         $this->schedule->find($id)->update($data);
         return $this->schedule->find($id);
     }
