@@ -28,7 +28,7 @@ class OrganizerServiceImpl implements OrganizerService
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
         private DeleteCommand $deleteCommand,
-        private CacheRepository $CacheRepository,
+        private CacheRepository $cacheRepository,
         private ValidatorService $validator
     ){}
 
@@ -37,7 +37,7 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        if($this->hasCache()) return $this->getFromCache();
+        if($this->hasCache('organizer', 0)) return $this->getFromCache();
         $data = $this->getAllCommand->execute();
         $this->setCache($data);
         return $data;
@@ -51,6 +51,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function getOne(int $id): Organizer
     {
         $this->failIfNotExists($id);
+        if($this->hasCache($this->key('organizer', $id))) $model = $this->getFromCache();
         $model = $this->getOneCommand->execute($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -78,6 +79,7 @@ class OrganizerServiceImpl implements OrganizerService
     {
         $this->validateEdit($data);
         $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->key('organizer', $id));
         $model = $this->updateCommand->execute($data, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -123,9 +125,10 @@ class OrganizerServiceImpl implements OrganizerService
     /**
      * @return bool
      */
-    private function hasCache(): bool
+    private function hasCache(string $key): bool
     {
-        return $this->CacheRepository->has('organizers');
+        if($key) return $this->cacheRepository->has($key);
+        return $this->cacheRepository->has('organizers');
     }
 
     /**
@@ -133,7 +136,8 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function getFromCache(): Collection
     {
-        return Collection::make($this->CacheRepository->get('organizers'));
+        dd(1);
+        return Collection::make($this->cacheRepository->get('organizers'));
     }
 
     /**
@@ -142,6 +146,11 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function setCache(Collection $organizer): void
     {
-        $this->CacheRepository->set('organizers', $organizer, 3600);
+        $this->cacheRepository->set('organizers', $organizer, 3600);
+    }
+
+    private function key(string $resource, int $identifier)
+    {
+        return $this->cacheRepository->key($resource, $identifier);
     }
 }
