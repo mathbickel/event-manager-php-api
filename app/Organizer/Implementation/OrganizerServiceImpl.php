@@ -38,7 +38,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function getAll(): Collection
     {
         $key = $this->key('organizer', 0);
-        if($this->hasCache($key)) return $this->getFromCache();
+        if($this->hasCache($key)) return $this->getFromCache($key);
         $data = $this->getAllCommand->execute();
         $this->setCache($key, $data, 3600);
         return $data;
@@ -55,6 +55,7 @@ class OrganizerServiceImpl implements OrganizerService
         $key = $this->key('organizer', $id);
         if($this->hasCache($key)) $model = $this->getFromCache($key);
         $model = $this->getOneCommand->execute($id);
+        $this->setCache($key, $model, 3600);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
     }
