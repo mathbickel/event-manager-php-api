@@ -23,4 +23,19 @@ class CacheService
     {
         $this->CacheRepository->delete($key);
     }
+
+    public function has(string $key)
+    {
+        return $this->CacheRepository->has($key);
+    }
+
+    public function invalidateCache()
+    {
+        $this->CacheRepository->invalidateCache();
+    }
+
+    public function key(string $resource, int $identifier)
+    {
+        return $this->CacheRepository->key($resource, $identifier);
+    }
 }
