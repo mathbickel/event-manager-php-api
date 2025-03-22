@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendeeController;
+use App\Http\Controllers\CacheController;
 use App\Http\Controllers\NotificationsController;
 
 Route::group(['prefix' => 'organizer'], function () {
@@ -54,4 +55,8 @@ Route::group(['prefix' => 'notifications'], function () {
     Route::post('/store', [NotificationsController::class, 'store'])->name('notifications.store');
     Route::put('/{id}', [NotificationsController::class, 'update'])->name('notifications.update');
     Route::delete('/{id}', [NotificationsController::class, 'delete'])->name('notifications.delete');
+});
+
+Route::group(['prefix' => 'cache'], function () {
+    Route::get('/invalidate', [CacheController::class, 'invalidateCache'])->name('cache.invalidate');
 });
