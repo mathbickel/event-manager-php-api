@@ -37,9 +37,10 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        if($this->hasCache('organizer', 0)) return $this->getFromCache();
+        $key = $this->key('organizer', 0);
+        if($this->hasCache($key)) return $this->getFromCache();
         $data = $this->getAllCommand->execute();
-        $this->setCache($data);
+        $this->setCache($key, $data, 3600);
         return $data;
     }
 
@@ -51,7 +52,8 @@ class OrganizerServiceImpl implements OrganizerService
     public function getOne(int $id): Organizer
     {
         $this->failIfNotExists($id);
-        if($this->hasCache($this->key('organizer', $id))) $model = $this->getFromCache();
+        $key = $this->key('organizer', $id);
+        if($this->hasCache($key)) $model = $this->getFromCache($key);
         $model = $this->getOneCommand->execute($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -119,6 +121,10 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function failIfNotExists(int $id): void
     {
+        $key = $this->key('organizer', $id);
+        if($this->hasCache($key)) {
+            if(!$this->getFromCache($key)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
+        }
         if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
     }
 
@@ -128,25 +134,24 @@ class OrganizerServiceImpl implements OrganizerService
     private function hasCache(string $key): bool
     {
         if($key) return $this->cacheRepository->has($key);
-        return $this->cacheRepository->has('organizers');
+        return $this->cacheRepository->has($key);
     }
 
     /**
      * @return Collection
      */
-    private function getFromCache(): Collection
+    private function getFromCache(string $key): Collection
     {
-        dd(1);
-        return Collection::make($this->cacheRepository->get('organizers'));
+        return Collection::make(json_decode($this->cacheRepository->get($key)));
     }
 
     /**
      * @param Collection $organizer
      * @return void
      */
-    private function setCache(Collection $organizer): void
+    private function setCache(string $key, Collection $organizer): void
     {
-        $this->cacheRepository->set('organizers', $organizer, 3600);
+        $this->cacheRepository->set($key, $organizer, 3600);
     }
 
     private function key(string $resource, int $identifier)
