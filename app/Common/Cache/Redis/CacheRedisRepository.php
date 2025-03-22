@@ -66,4 +66,9 @@ class CacheRedisRepository implements CacheRepository
     {
         return $this->connection()->exists($key);
     }
+
+    public function key(string $resource, int $identifier): string
+    {
+        return "{$resource}:{$identifier}";
+    }
 }

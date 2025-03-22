@@ -37,7 +37,7 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        if($this->hasCache()) return $this->getFromCache();
+        if($this->hasCache('organizer', 0)) return $this->getFromCache();
         $data = $this->getAllCommand->execute();
         $this->setCache($data);
         return $data;
@@ -51,6 +51,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function getOne(int $id): Organizer
     {
         $this->failIfNotExists($id);
+        if($this->hasCache($this->key('organizer', $id))) $model = $this->getFromCache();
         $model = $this->getOneCommand->execute($id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -123,8 +124,9 @@ class OrganizerServiceImpl implements OrganizerService
     /**
      * @return bool
      */
-    private function hasCache(): bool
+    private function hasCache(string $key): bool
     {
+        if($key) return $this->CacheRepository->has($key);
         return $this->CacheRepository->has('organizers');
     }
 
@@ -143,5 +145,10 @@ class OrganizerServiceImpl implements OrganizerService
     private function setCache(Collection $organizer): void
     {
         $this->CacheRepository->set('organizers', $organizer, 3600);
+    }
+
+    private function key(string $resource, int $identifier)
+    {
+        return $this->CacheRepository->key($resource, $identifier);
     }
 }

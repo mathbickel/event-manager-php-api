@@ -35,4 +35,10 @@ interface CacheRepository
      * @throws Exception
      */
     public function has(string $key): bool;
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public function key(string $resource, int $identifier): string;
 }
