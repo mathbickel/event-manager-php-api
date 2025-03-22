@@ -71,4 +71,9 @@ class CacheRedisRepository implements CacheRepository
     {
         return "{$resource}:{$identifier}";
     }
+
+    public function invalidateCache(): void
+    {
+        $this->connection()->flushdb();
+    }
 }

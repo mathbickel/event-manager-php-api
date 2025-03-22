@@ -41,4 +41,10 @@ interface CacheRepository
      * @return string
      */
     public function key(string $resource, int $identifier): string;
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function invalidateCache(): void;
 }

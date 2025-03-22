@@ -28,7 +28,7 @@ class OrganizerServiceImpl implements OrganizerService
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
         private DeleteCommand $deleteCommand,
-        private CacheRepository $CacheRepository,
+        private CacheRepository $cacheRepository,
         private ValidatorService $validator
     ){}
 
@@ -79,6 +79,7 @@ class OrganizerServiceImpl implements OrganizerService
     {
         $this->validateEdit($data);
         $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->key('organizer', $id));
         $model = $this->updateCommand->execute($data, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
@@ -126,8 +127,8 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function hasCache(string $key): bool
     {
-        if($key) return $this->CacheRepository->has($key);
-        return $this->CacheRepository->has('organizers');
+        if($key) return $this->cacheRepository->has($key);
+        return $this->cacheRepository->has('organizers');
     }
 
     /**
@@ -135,7 +136,8 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function getFromCache(): Collection
     {
-        return Collection::make($this->CacheRepository->get('organizers'));
+        dd(1);
+        return Collection::make($this->cacheRepository->get('organizers'));
     }
 
     /**
@@ -144,11 +146,11 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function setCache(Collection $organizer): void
     {
-        $this->CacheRepository->set('organizers', $organizer, 3600);
+        $this->cacheRepository->set('organizers', $organizer, 3600);
     }
 
     private function key(string $resource, int $identifier)
     {
-        return $this->CacheRepository->key($resource, $identifier);
+        return $this->cacheRepository->key($resource, $identifier);
     }
 }
