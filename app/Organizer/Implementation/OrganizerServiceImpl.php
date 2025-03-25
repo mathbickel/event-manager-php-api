@@ -2,7 +2,6 @@
 
 namespace App\Organizer\Implementation;
 
-use App\Common\Cache\Cache;
 use App\Common\Cache\CacheRepository;
 use App\Organizer\Domain\Organizer;
 use App\Organizer\Domain\OrganizerService;
@@ -146,11 +145,20 @@ class OrganizerServiceImpl implements OrganizerService
         $this->cacheRepository->set($key, $organizer, 3600);
     }
 
+    /**
+     * @param string $resource
+     * @param int $identifier
+     * @return string
+     */
     private function key(string $resource, int $identifier)
     {
         return $this->cacheRepository->key($resource, $identifier);
     }
 
+    /**
+     * @param string $key
+     * @return OrganizerModel
+     */
     private function getFromDbAndSetFirstCache(string $key): OrganizerModel
     {
         $id = $this->extractIdentifierFrom($key);
@@ -159,15 +167,21 @@ class OrganizerServiceImpl implements OrganizerService
         return $model;
     }
 
+    /**
+     * @param string $key
+     */
     private function checkIfHasCacheOrGetFromDbAndSetFirstCache(string $key)
     {   
         return $this->hasCache($key) ? $this->getFromCache($key) : $this->getFromDbAndSetFirstCache($key);
     }
 
+    /**
+     * @param string $key
+     * @return int
+     */
     private function extractIdentifierFrom(string $key): int
     {
         $parts = explode(':', $key);
         return (int) end($parts);
     }
-    
 }
