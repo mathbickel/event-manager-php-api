@@ -12,8 +12,6 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
-use App\Common\Error\Error;
-use App\Common\Helpers\Helper;
 use App\Common\ValidatorService;
 use App\Exceptions\NotFoundException;
 use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
@@ -38,9 +36,7 @@ class OrganizerServiceImpl implements OrganizerService
     public function getAll(): Collection
     {
         $key = $this->key('organizer', 0);
-        if($this->hasCache($key)) return $this->getFromCache($key);
-        $data = $this->getAllCommand->execute();
-        $this->setCache($key, $data, 3600);
+        $data = $this->checkIfHasCacheOrGetFromDbAndSetFirstCache($key, 0);
         return $data;
     }
 
@@ -53,9 +49,7 @@ class OrganizerServiceImpl implements OrganizerService
     {
         $this->failIfNotExists($id);
         $key = $this->key('organizer', $id);
-        if($this->hasCache($key)) $model = $this->getFromCache($key);
-        $model = $this->getOneCommand->execute($id);
-        $this->setCache($key, $model, 3600);
+        $model = $this->checkIfHasCacheOrGetFromDbAndSetFirstCache($key, $id);
         $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
         return $adapter->toOrganizerData();
     }
@@ -122,10 +116,7 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function failIfNotExists(int $id): void
     {
-        $key = $this->key('organizer', $id);
-        if($this->hasCache($key)) {
-            if(!$this->getFromCache($key)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
-        }
+        if($this->hasCache($this->key('organizer', $id))) return;
         if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
     }
 
@@ -159,4 +150,24 @@ class OrganizerServiceImpl implements OrganizerService
     {
         return $this->cacheRepository->key($resource, $identifier);
     }
+
+    private function getFromDbAndSetFirstCache(string $key): OrganizerModel
+    {
+        $id = $this->extractIdentifierFrom($key);
+        $id != 0 ? $model = $this->getOneCommand->execute($id) : $model = $this->getAllCommand->execute(); 
+        $this->setCache($key, $model, 3600);
+        return $model;
+    }
+
+    private function checkIfHasCacheOrGetFromDbAndSetFirstCache(string $key)
+    {   
+        return $this->hasCache($key) ? $this->getFromCache($key) : $this->getFromDbAndSetFirstCache($key);
+    }
+
+    private function extractIdentifierFrom(string $key): int
+    {
+        $parts = explode(':', $key);
+        return (int) end($parts);
+    }
+    
 }
