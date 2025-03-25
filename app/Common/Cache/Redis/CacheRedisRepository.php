@@ -41,9 +41,7 @@ class CacheRedisRepository implements CacheRepository
     {   
         $connection = $this->connection();
         $connection->set($key, $value);
-        if ($ttl !== null) {
-            $connection->expire($key, $ttl);
-        }
+        if ($ttl !== null) $connection->expire($key, $ttl);
     }
 
     /**
