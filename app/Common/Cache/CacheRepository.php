@@ -47,4 +47,10 @@ interface CacheRepository
      * @throws Exception
      */
     public function invalidateCache(): void;
+
+    /**
+     * @param string $key
+     * @return int
+     */
+    public function extractIdentifierFrom(string $key): int;
 }
