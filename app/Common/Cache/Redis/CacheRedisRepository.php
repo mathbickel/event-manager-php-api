@@ -65,6 +65,11 @@ class CacheRedisRepository implements CacheRepository
         return $this->connection()->exists($key);
     }
 
+    /**
+     * @param string $resource
+     * @param int $identifier
+     * @return string
+     */
     public function key(string $resource, int $identifier): string
     {
         return "{$resource}:{$identifier}";
@@ -73,5 +78,15 @@ class CacheRedisRepository implements CacheRepository
     public function invalidateCache(): void
     {
         $this->connection()->flushdb();
+    }
+
+    /**
+     * @param string $key
+     * @return int
+     */
+    public function extractIdentifierFrom(string $key): int
+    {
+        $parts = explode(':', $key);
+        return (int) end($parts);
     }
 }
