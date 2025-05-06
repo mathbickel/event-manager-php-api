@@ -17,10 +17,12 @@ use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
 use App\Organizer\Infra\OrganizerModel;
 use Exception;
 use Illuminate\Support\Arr;
+use App\Common\Cache\Trait\CacheTrait;
 
 class OrganizerServiceImpl implements OrganizerService
 {
-    private const CACHE_TTL = 3600;
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
@@ -92,6 +94,32 @@ class OrganizerServiceImpl implements OrganizerService
     }
 
     /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
+    {
+        return $this->cacheRepository;
+    }
+
+
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
+    {
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
+    }
+
+    /**
      * @param array $data
      * @param bool $isEdit
      * @return void
@@ -115,60 +143,6 @@ class OrganizerServiceImpl implements OrganizerService
         $key = $this->cacheRepository->key('organizer', $id);
         if($this->hasCache($key)) return;
         if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasCache(string $key): bool
-    {
-        return $this->cacheRepository->has($key);
-    }
-
-    /**
-     * @return Collection
-     */
-    private function getFromCache(string $key): Collection
-    {
-        return Collection::make(json_decode($this->cacheRepository->get($key)));
-    }
-
-    /**
-     * @param Collection $organizer
-     * @return void
-     */
-    private function setCache(string $key, Collection $organizer): void
-    {
-        $this->cacheRepository->set($key, $organizer, self::CACHE_TTL);
-    }
-
-    /**
-     * @param string $key
-     * @return OrganizerModel
-     */
-    private function getFromDbAndSetFirstCache(string $key): OrganizerModel
-    {
-        $id = $this->cacheRepository->extractIdentifierFrom($key);
-        $id != 0 ? 
-            $model = $this->getOneCommand->execute($id) 
-            : $model = $this->getAllCommand->execute(); 
-
-        if (!$model) {
-            throw new NotFoundException("Organizer {$id} not found");
-        }
-
-        $this->setCache($key, $model, self::CACHE_TTL);
-        return $model;
-    }
-
-    /**
-     * @param string $key
-     */
-    private function getWithCache(string $key)
-    {   
-        return $this->hasCache($key) 
-            ? $this->getFromCache($key) 
-            : $this->getFromDbAndSetFirstCache($key);
     }
 
     private function toOrganizerData(OrganizerModel $model): Organizer
