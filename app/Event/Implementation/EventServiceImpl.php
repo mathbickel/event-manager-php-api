@@ -138,13 +138,12 @@ class EventServiceImpl implements EventService
     {
         $key = $this->cacheRepository->key('event', $id);
         if($this->hasCache($key)) return;
-        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['event_id' => $id]);
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['event' => $id]);
     }
 
     private function toEventData(EventModel $model): Event
     {
         return EventModelToEventDataAdapter::getInstance($model)->toEventData();
     }
-
 }
 
