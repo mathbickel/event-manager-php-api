@@ -12,18 +12,26 @@ use App\Attendee\Domain\AttendeeService;
 use App\Attendee\Infra\Adapters\AttendeeModelToAttendeeDataAdapter;
 use App\Attendee\Infra\AttendeeModel;
 use Illuminate\Database\Eloquent\Collection;
-use App\Common\Helpers\Helper;
-use App\Common\Error\Error;
 use Exception;
+use App\Common\Cache\CacheRepository;
+use App\Common\ValidatorService;
+use App\Common\Cache\Trait\CacheTrait;
+use App\Exceptions\NotFoundException;
+use Illuminate\Support\Arr;
+
 
 class AttendeeServiceImpl implements AttendeeService
 {
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private ValidatorService $validator,
+        private CacheRepository $cacheRepository
     ) {}
 
     /**
@@ -31,7 +39,9 @@ class AttendeeServiceImpl implements AttendeeService
      */
     public function getAll(): Collection
     {
-        return $this->getAllCommand->execute();
+        $key = $this->cacheRepository->key('attendee', 0);
+        $data = $this->cacheRepository->get($key);
+        return $data;
     }
 
     /**
@@ -41,10 +51,10 @@ class AttendeeServiceImpl implements AttendeeService
      */
     public function getOne(int $id): Attendee
     {
-        $this->ifNotExists($id);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = AttendeeModelToAttendeeDataAdapter::getInstance($model);
-        return $adapter->toAttendee();
+        $this->failIfNotExists($id);
+        $key = $this->cacheRepository->key('attendee', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toAttendeeData($model);
     }
 
     /**
@@ -55,8 +65,7 @@ class AttendeeServiceImpl implements AttendeeService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = AttendeeModelToAttendeeDataAdapter::getInstance($model);
-        return $adapter->toAttendee();
+        return $this->toAttendeeData($model);
     }
 
     /**
@@ -67,11 +76,11 @@ class AttendeeServiceImpl implements AttendeeService
      */
     public function update(array $data, int $id): Attendee
     {
-        $this->validateEdit($data);
-        $this->ifNotExists($id);
+        $this->validate($data);
+        $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->cacheRepository->key('attendee', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = AttendeeModelToAttendeeDataAdapter::getInstance($model);
-        return $adapter->toAttendee();
+        return $this->toAttendeeData($model);
     }
 
     /**
@@ -81,23 +90,59 @@ class AttendeeServiceImpl implements AttendeeService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
 
-    private function validate(array $data)
+     /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
     {
-        Helper::validate($data, AttendeeModel::$rules);
+        return $this->cacheRepository;
     }
 
-    private function validateEdit(array $data)
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
     {
-        Helper::validateEdit($data, AttendeeModel::$rules);
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
     }
 
-    private function ifNotExists(int $id)
+    /**
+     * @param array $data
+     * @param bool $isEdit
+     * @return void
+     */
+    private function validate(array $data, bool $isEdit = false)
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['attendee_id' => $id]);
+        $rules = $isEdit 
+            ? Arr::except(AttendeeModel::$rules, ['required_fields_for_edit']) 
+            : AttendeeModel::$rules;
+            
+        $this->validator->validate($data, $rules);
+    }
+    
+    private function failIfNotExists(int $id)
+    {
+        $key = $this->cacheRepository->key('event', $id);
+        if($this->hasCache($key)) return;
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['attendee' => $id]);
+    }
+
+    private function toAttendeeData(AttendeeModel $model): Attendee
+    {
+        return AttendeeModelToAttendeeDataAdapter::getInstance($model)->toAttendee();
     }
 
 }

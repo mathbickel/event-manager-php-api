@@ -12,18 +12,25 @@ use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use App\Ticket\Infra\Adapters\TicketModelToTicketDataAdapter;
 use App\Ticket\Infra\TicketModel;
-use App\Common\Helpers\Helper;
-use App\Common\Error\Error;
+use App\Common\ValidatorService;
+use App\Common\Cache\CacheRepository;
+use App\Common\Cache\Trait\CacheTrait;
+use Illuminate\Support\Arr;
 use Exception;
+use App\Exceptions\NotFoundException;
 
 class TicketServiceImpl implements TicketService
 {
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private ValidatorService $validator,
+        private CacheRepository $cacheRepository
     ){}
 
     /**
@@ -31,7 +38,9 @@ class TicketServiceImpl implements TicketService
      */
     public function getAll(): Collection
     {
-        return $this->getAllCommand->execute();
+        $key = $this->cacheRepository->key('ticket', 0);
+        $data = $this->cacheRepository->get($key);
+        return $data;
     }
 
     /**
@@ -41,10 +50,10 @@ class TicketServiceImpl implements TicketService
      */
     public function getOne(int $id): Ticket
     {
-        $this->ifNotExists($id);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = TicketModelToTicketDataAdapter::getInstance($model);
-        return $adapter->toTicketData();
+        $this->failIfNotExists($id);
+        $key = $this->cacheRepository->key('ticket', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toTicketData($model);
     }
 
     /**
@@ -55,8 +64,7 @@ class TicketServiceImpl implements TicketService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = TicketModelToTicketDataAdapter::getInstance($model);
-        return $adapter->toTicketData();
+        return $this->toTicketData($model);
     }
 
     /**
@@ -67,11 +75,11 @@ class TicketServiceImpl implements TicketService
      */
     public function update(array $data, int $id): ?Ticket
     {
-        $this->ifNotExists($id);
-        $this->validateEdit($data);
+        $this->validate($data);
+        $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->cacheRepository->key('ticket', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = TicketModelToTicketDataAdapter::getInstance($model);
-        return $adapter->toTicketData();
+        return $this->toTicketData($model);
     }
 
     /**
@@ -81,22 +89,58 @@ class TicketServiceImpl implements TicketService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
 
-    private function validate(array $data)
+     /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
     {
-        Helper::validate($data, TicketModel::$rules);
+        return $this->cacheRepository;
     }
 
-    private function validateEdit(array $data)
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
     {
-        Helper::validateEdit($data, TicketModel::$rules);
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
     }
 
-    private function ifNotExists(int $id)
+    /**
+     * @param array $data
+     * @param bool $isEdit
+     * @return void
+     */
+    private function validate(array $data, bool $isEdit = false)
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['ticket_id' => $id]);
+        $rules = $isEdit 
+            ? Arr::except(TicketModel::$rules, ['required_fields_for_edit']) 
+            : TicketModel::$rules;
+            
+        $this->validator->validate($data, $rules);
+    }
+
+    private function failIfNotExists(int $id)
+    {
+        $key = $this->cacheRepository->key('ticket', $id);
+        if($this->hasCache($key)) return;
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['ticket' => $id]);
+    }
+
+    private function toTicketData(TicketModel $model): Ticket
+    {
+        return TicketModelToTicketDataAdapter::getInstance($model)->toTicketData();
     }
 }
