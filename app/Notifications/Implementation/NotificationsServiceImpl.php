@@ -2,29 +2,36 @@
 
 namespace App\Notifications\Implementation;
 
+use App\Common\Cache\Trait\CacheTrait;
 use App\Notifications\Domain\Notifications;
 use App\Notifications\Domain\NotificationsService;
 use App\Notifications\Infra\Adapters\NotificationsModelToNotificationsDataAdapter;
 use App\Notifications\Infra\NotificationsModel;
 use Illuminate\Database\Eloquent\Collection;
-use App\Common\Helpers\Helper;
-use App\Common\Error\Error;
 use App\Common\Commands\GetAllCommand;
 use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
 use Exception;
+use App\Common\Cache\CacheRepository;
+use App\Common\ValidatorService;
+use App\Exceptions\NotFoundException;
+use Illuminate\Support\Arr;
 
 
 class NotificationsServiceImpl implements NotificationsService
 {
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private ValidatorService $validator,
+        private CacheRepository $cacheRepository
     ) {}
 
     /**
@@ -32,7 +39,9 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function getAll(): Collection
     {
-        return $this->getAllCommand->execute();
+        $key = $this->cacheRepository->key('notifications', 0);
+        $data = $this->cacheRepository->get($key);
+        return $data;
     }
 
     /**
@@ -42,10 +51,10 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function getOne(int $id): ?Notifications
     {
-        $this->ifNotExists($id);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
-        return $adapter->NotificationsData();
+        $this->failIfNotExists($id);
+        $key = $this->cacheRepository->key('notifications', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toNotificationsData($model);
     }
 
     /**
@@ -56,8 +65,7 @@ class NotificationsServiceImpl implements NotificationsService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
-        return $adapter->NotificationsData();
+        return $this->toNotificationsData($model);
     }
 
     /**
@@ -68,11 +76,11 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function update(array $data, int $id): ?Notifications
     {
-        $this->ifNotExists($id);
-        $this->validateEdit($data);
+        $this->validate($data);
+        $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->cacheRepository->key('notifications', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = NotificationsModelToNotificationsDataAdapter::getInstance($model);
-        return $adapter->NotificationsData();
+        return $this->toNotificationsData($model);
     }
 
     /**
@@ -82,22 +90,58 @@ class NotificationsServiceImpl implements NotificationsService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
-
-    private function validate(array $data)
+    
+     /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
     {
-        Helper::validate($data, NotificationsModel::$rules);
+        return $this->cacheRepository;
     }
 
-    private function validateEdit(array $data)
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
     {
-        Helper::validateEdit($data, NotificationsModel::$rules);
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
     }
 
-    private function ifNotExists(int $id)
+    /**
+     * @param array $data
+     * @param bool $isEdit
+     * @return void
+     */
+    private function validate(array $data, bool $isEdit = false)
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['notification_id' => $id]);
+        $rules = $isEdit 
+            ? Arr::except(NotificationsModel::$rules, ['required_fields_for_edit']) 
+            : NotificationsModel::$rules;
+            
+        $this->validator->validate($data, $rules);
+    }
+    
+    private function failIfNotExists(int $id)
+    {
+        $key = $this->cacheRepository->key('event', $id);
+        if($this->hasCache($key)) return;
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['notifications' => $id]);
+    }
+
+    private function toNotificationsData(NotificationsModel $model): Notifications
+    {
+        return NotificationsModelToNotificationsDataAdapter::getInstance($model)->NotificationsData();
     }
 }
