@@ -24,6 +24,7 @@ abstract class EventData
 
     abstract public function toArray(): array;
     abstract public function toString(): string;
+    
     public function getId(): int
     {
         return $this->id;
