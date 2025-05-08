@@ -7,7 +7,6 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
-use App\Common\Error\Error;
 use App\Common\Helpers\Helper;
 use App\Event\Domain\Event;
 use App\Event\Domain\EventService;
@@ -15,15 +14,24 @@ use App\Event\Infra\Adapters\EventModelToEventDataAdapter;
 use Illuminate\Database\Eloquent\Collection;
 use App\Event\Infra\EventModel;
 use Exception;
+use App\Common\Cache\CacheRepository;
+use App\Common\ValidatorService;
+use App\Common\Cache\Trait\CacheTrait;
+use App\Exceptions\NotFoundException;
+use Illuminate\Support\Arr;
 
 class EventServiceImpl implements EventService
 {
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private ValidatorService $validator,
+        private CacheRepository $cacheRepository
     ){}
 
     /**
@@ -31,7 +39,9 @@ class EventServiceImpl implements EventService
      */
     public function getAll(): Collection
     {
-        return $this->getAllCommand->execute();
+        $key = $this->cacheRepository->key('event', 0);
+        $data = $this->cacheRepository->get($key);
+        return $data;
     }
 
     /**
@@ -41,10 +51,10 @@ class EventServiceImpl implements EventService
      */
     public function getOne(int $id): Event
     {
-        $this->ifNotExists($id);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = EventModelToEventDataAdapter::getInstance($model);
-        return $adapter->toEventData();
+        $this->failIfNotExists($id);
+        $key = $this->cacheRepository->key('event', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toEventData($model);
     }
 
     /**
@@ -55,8 +65,7 @@ class EventServiceImpl implements EventService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = EventModelToEventDataAdapter::getInstance($model);
-        return $adapter->toEventData();
+        return $this->toEventData($model);
     }
 
     /**
@@ -67,11 +76,11 @@ class EventServiceImpl implements EventService
      */
     public function update(array $data, int $id): Event
     {
-        $this->ifNotExists($id);
-        $this->validateEdit($data);
+        $this->validate($data, true);
+        $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->cacheRepository->key('event', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = EventModelToEventDataAdapter::getInstance($model);
-        return $adapter->toEventData();
+        return $this->toEventData($model);
     }
 
     /**
@@ -81,23 +90,60 @@ class EventServiceImpl implements EventService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
 
-    private function validate(array $data)
+
+     /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
     {
-        Helper::validate($data, EventModel::$rules);
+        return $this->cacheRepository;
     }
 
-    private function validateEdit(array $data)
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
     {
-        Helper::validateEdit($data, EventModel::$rules);
+        return $this->getAllCommand;
     }
     
-    private function ifNotExists(int $id)
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['event_id' => $id]);
+        return $this->getOneCommand;
+    }
+
+    /**
+     * @param array $data
+     * @param bool $isEdit
+     * @return void
+     */
+    private function validate(array $data, bool $isEdit = false)
+    {
+        $rules = $isEdit 
+            ? Arr::except(EventModel::$rules, ['required_fields_for_edit']) 
+            : EventModel::$rules;
+            
+        $this->validator->validate($data, $rules);
+    }
+    
+    private function failIfNotExists(int $id)
+    {
+        $key = $this->cacheRepository->key('event', $id);
+        if($this->hasCache($key)) return;
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['event' => $id]);
+    }
+
+    private function toEventData(EventModel $model): Event
+    {
+        return EventModelToEventDataAdapter::getInstance($model)->toEventData();
     }
 }
 

@@ -2,7 +2,6 @@
 
 namespace App\Organizer\Implementation;
 
-use App\Common\Cache\Cache;
 use App\Common\Cache\CacheRepository;
 use App\Organizer\Domain\Organizer;
 use App\Organizer\Domain\OrganizerService;
@@ -12,16 +11,18 @@ use App\Common\Commands\GetOneCommand;
 use App\Common\Commands\CreateCommand;
 use App\Common\Commands\UpdateCommand;
 use App\Common\Commands\DeleteCommand;
-use App\Common\Error\Error;
-use App\Common\Helpers\Helper;
 use App\Common\ValidatorService;
 use App\Exceptions\NotFoundException;
 use App\Organizer\Infra\Adapters\OrganizerModelToOrganizerDataAdapter;
 use App\Organizer\Infra\OrganizerModel;
 use Exception;
+use Illuminate\Support\Arr;
+use App\Common\Cache\Trait\CacheTrait;
 
 class OrganizerServiceImpl implements OrganizerService
 {
+    use CacheTrait;
+
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
@@ -37,10 +38,8 @@ class OrganizerServiceImpl implements OrganizerService
     */
     public function getAll(): Collection
     {
-        $key = $this->key('organizer', 0);
-        if($this->hasCache($key)) return $this->getFromCache();
-        $data = $this->getAllCommand->execute();
-        $this->setCache($key, $data, 3600);
+        $key = $this->cacheRepository->key('organizer', 0);
+        $data = $this->getWithCache($key, 0);
         return $data;
     }
 
@@ -52,11 +51,9 @@ class OrganizerServiceImpl implements OrganizerService
     public function getOne(int $id): Organizer
     {
         $this->failIfNotExists($id);
-        $key = $this->key('organizer', $id);
-        if($this->hasCache($key)) $model = $this->getFromCache($key);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
-        return $adapter->toOrganizerData();
+        $key = $this->cacheRepository->key('organizer', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toOrganizerData($model);
     }
 
     /**
@@ -67,8 +64,7 @@ class OrganizerServiceImpl implements OrganizerService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
-        return $adapter->toOrganizerData();
+        return $this->toOrganizerData($model);
     }
 
     /**
@@ -79,12 +75,11 @@ class OrganizerServiceImpl implements OrganizerService
      */
     public function update(array $data, int $id): Organizer
     {
-        $this->validateEdit($data);
+        $this->validate($data, true);
         $this->failIfNotExists($id);
-        $this->cacheRepository->delete($this->key('organizer', $id));
+        $this->cacheRepository->delete($this->cacheRepository->key('organizer', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = OrganizerModelToOrganizerDataAdapter::getInstance($model);
-        return $adapter->toOrganizerData();
+        return $this->toOrganizerData($model);
     }
 
     /**
@@ -99,19 +94,43 @@ class OrganizerServiceImpl implements OrganizerService
     }
 
     /**
-     * @param array $data
+     * @return CacheRepository
      */
-    private function validate(array $data)
+    public function getCacheRepository(): CacheRepository
     {
-        $this->validator->validate($data, OrganizerModel::$rules);
+        return $this->cacheRepository;
+    }
+
+
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
+    {
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
     }
 
     /**
      * @param array $data
+     * @param bool $isEdit
+     * @return void
      */
-    private function validateEdit(array $data)
+    private function validate(array $data, bool $isEdit = false)
     {
-        $this->validator->validateEdit($data, OrganizerModel::$rules);
+        $rules = $isEdit 
+            ? Arr::except(OrganizerModel::$rules, ['required_fields_for_edit']) 
+            : OrganizerModel::$rules;
+            
+        $this->validator->validate($data, $rules);
     }
 
     /**
@@ -121,41 +140,13 @@ class OrganizerServiceImpl implements OrganizerService
      */
     private function failIfNotExists(int $id): void
     {
-        $key = $this->key('organizer', $id);
-        if($this->hasCache($key)) {
-            if(!$this->getFromCache($key)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
-        }
+        $key = $this->cacheRepository->key('organizer', $id);
+        if($this->hasCache($key)) return;
         if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['organizer_id' => $id]);
     }
 
-    /**
-     * @return bool
-     */
-    private function hasCache(string $key): bool
+    private function toOrganizerData(OrganizerModel $model): Organizer
     {
-        if($key) return $this->cacheRepository->has($key);
-        return $this->cacheRepository->has($key);
-    }
-
-    /**
-     * @return Collection
-     */
-    private function getFromCache(string $key): Collection
-    {
-        return Collection::make(json_decode($this->cacheRepository->get($key)));
-    }
-
-    /**
-     * @param Collection $organizer
-     * @return void
-     */
-    private function setCache(string $key, Collection $organizer): void
-    {
-        $this->cacheRepository->set($key, $organizer, 3600);
-    }
-
-    private function key(string $resource, int $identifier)
-    {
-        return $this->cacheRepository->key($resource, $identifier);
+        return OrganizerModelToOrganizerDataAdapter::getInstance($model)->toOrganizerData();
     }
 }
