@@ -22,6 +22,8 @@ class TicketModelToTicketDataAdapter
             $this->ticket->event_id,
             $this->ticket->name,
             $this->ticket->price,
+            $this->ticket->quantity,
+            $this->ticket->available_quantity,
             $this->ticket->type,
             $this->ticket->status
         );

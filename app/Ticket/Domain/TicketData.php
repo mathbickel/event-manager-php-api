@@ -8,15 +8,19 @@ abstract class TicketData
     protected int $event_id;
     protected string $name;
     protected int $price;
+    protected int $quantity;
+    protected int $available_quantity;
     protected string $type;
     protected string $status;
 
-    public function __construct(int $id, int $event_id, string $name, int $price, string $type, string $status)
+    public function __construct(int $id, int $event_id, string $name, int $price, int $quantity, int $available_quantity, string $type, string $status)
     {
         $this->id = $id;
         $this->event_id = $event_id;
         $this->name = $name;
         $this->price = $price;
+        $this->quantity = $quantity;
+        $this->available_quantity = $available_quantity;
         $this->type = $type;
         $this->status = $status;
     }
@@ -42,6 +46,16 @@ abstract class TicketData
     public function getPrice(): int
     {
         return $this->price;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function getAvailableQuantity(): int
+    {
+        return $this->available_quantity;
     }
 
     public function getType(): string
@@ -72,6 +86,16 @@ abstract class TicketData
     public function setPrice(int $price): void
     {
         $this->price = $price;
+    }
+
+    public function setQuantity(int $quantity): void
+    {
+        $this->quantity = $quantity;
+    }
+
+    public function setAvailableQuantity(int $available_quantity): void
+    {
+        $this->available_quantity = $available_quantity;
     }
 
     public function setType(string $type): void

@@ -15,15 +15,24 @@ use App\Schedule\Infra\Adapters\ScheduleModelToScheduleDataAdapter;
 use App\Schedule\Infra\ScheduleModel;
 use App\Common\Error\Error;
 use Exception;
+use App\Common\Cache\CacheRepository;
+use App\Common\ValidatorService;
+use App\Common\Cache\Trait\CacheTrait;
+use App\Exceptions\NotFoundException;
+use Illuminate\Support\Arr;
 
 class ScheduleServiceImpl implements ScheduleService
 {
+    use CacheTrait;
+    
     public function __construct(
         private GetAllCommand $getAllCommand,
         private GetOneCommand $getOneCommand,
         private CreateCommand $createCommand,
         private UpdateCommand $updateCommand,
-        private DeleteCommand $deleteCommand
+        private DeleteCommand $deleteCommand,
+        private ValidatorService $validator,
+        private CacheRepository $cacheRepository
     ) {}
 
     /**
@@ -31,7 +40,9 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function getAll(): Collection
     {
-        return $this->getAllCommand->execute();
+        $key = $this->cacheRepository->key('schedule', 0);
+        $data = $this->cacheRepository->get($key);
+        return $data;
     }
 
     /**
@@ -41,10 +52,10 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function getOne(int $id): ?Schedule
     {
-        $this->ifNotExists($id);
-        $model = $this->getOneCommand->execute($id);
-        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
-        return $adapter->toScheduleData();
+        $this->failIfNotExists($id);
+        $key = $this->cacheRepository->key('schedule', $id);
+        $model = $this->getWithCache($key, $id);
+        return $this->toScheduleData($model);
     }
 
     /**
@@ -55,8 +66,7 @@ class ScheduleServiceImpl implements ScheduleService
     {
         $this->validate($data);
         $model = $this->createCommand->execute($data);
-        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
-        return $adapter->toScheduleData();
+        return $this->toScheduleData($model);
     }
 
     /**
@@ -67,11 +77,11 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function update(array $data, int $id): ?Schedule
     {
-        $this->ifNotExists($id);
-        $this->validateEdit($data);
+        $this->validate($data);
+        $this->failIfNotExists($id);
+        $this->cacheRepository->delete($this->cacheRepository->key('event', $id));
         $model = $this->updateCommand->execute($data, $id);
-        $adapter = ScheduleModelToScheduleDataAdapter::getInstance($model);
-        return $adapter->toScheduleData();
+        return $this->toScheduleData($model);
     }
 
     /**
@@ -81,22 +91,59 @@ class ScheduleServiceImpl implements ScheduleService
      */
     public function delete(int $id): void
     {
-        $this->ifNotExists($id);
+        $this->failIfNotExists($id);
         $this->deleteCommand->execute($id);
     }
 
-    private function validate(array $data)
+         /**
+     * @return CacheRepository
+     */
+    public function getCacheRepository(): CacheRepository
     {
-        Helper::validate($data, ScheduleModel::$rules);
+        return $this->cacheRepository;
     }
 
-    private function validateEdit(array $data)
+    /**
+     * @return GetAllCommand
+     */
+
+    public function getGetAllCommand(): GetAllCommand
     {
-        Helper::validateEdit($data, ScheduleModel::$rules);
+        return $this->getAllCommand;
+    }
+    
+    /**
+     * @return GetOneCommand
+     */
+    public function getGetOneCommand(): GetOneCommand
+    {
+        return $this->getOneCommand;
     }
 
-    private function ifNotExists(int $id)
+    /**
+     * @param array $data
+     * @param bool $isEdit
+     * @return void
+     */
+    private function validate(array $data, bool $isEdit = false)
     {
-        if(!$this->getOneCommand->execute($id)) return Error::handle('Resource not found', ['schedule_id' => $id]);
+        $rules = $isEdit 
+            ? Arr::except(ScheduleModel::$rules, ['required_fields_for_edit']) 
+            : ScheduleModel::$rules;
+            
+        $this->validator->validate($data, $rules);
     }
+    
+    private function failIfNotExists(int $id)
+    {
+        $key = $this->cacheRepository->key('schedule', $id);
+        if($this->hasCache($key)) return;
+        if(!$this->getOneCommand->execute($id)) throw new NotFoundException('Resource not found', ['schedule' => $id]);
+    }
+
+    private function toScheduleData(ScheduleModel $model): Schedule
+    {
+        return ScheduleModelToScheduleDataAdapter::getInstance($model)->toScheduleData();
+    }
+
 }

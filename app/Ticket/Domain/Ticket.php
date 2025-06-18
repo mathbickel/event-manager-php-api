@@ -11,6 +11,8 @@ class Ticket extends TicketData
             'event_id' => $this->getEventId(),
             'name' => $this->getName(),
             'price' => $this->getPrice(),
+            'quantity' => $this->getQuantity(),
+            'available_quantity' => $this->getAvailableQuantity(),
             'type' => $this->getType(),
             'status' => $this->getStatus()
         ];
