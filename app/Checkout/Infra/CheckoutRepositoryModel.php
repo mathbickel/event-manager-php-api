@@ -4,29 +4,31 @@ namespace App\Checkout\Infra;
 
 use App\Checkout\Domain\Checkout;
 use App\Checkout\Domain\CheckoutRepository;
+use App\Ticket\Domain\TicketRepository;
+use App\Attendee\Domain\AttendeeRepository;
 use App\Ticket\Infra\TicketModel;
 use App\Attendee\Infra\AttendeeModel;
+use App\Exceptions\PayoutException;
 
 class CheckoutRepositoryModel implements CheckoutRepository
 {
     public function __construct(
         protected CheckoutModel $checkout,
-        protected TicketModel $ticket,
-        protected AttendeeModel $attendee
+        protected TicketRepository $ticketRepository,
+        protected AttendeeRepository $attendeeRepository
     ) {}
 
     public function payout(array $data): CheckoutModel
     {
-        $checkout = $this->checkout::create($data);
-        $ticket = $this->ticket::find($data['ticket_id']);
-        $ticket->update([
-            'available_quantity' => $ticket->available_quantity - $data['quantity']
-        ]);
-        $attendee = $this->attendee::find($data['attendee_id']);
-        $attendee->update([
-            'quantity' => $attendee->quantity + $data['quantity']
-        ]);
-        return $checkout;
+        try {
+            $checkout = $this->checkout::create($data);
+            $this->ticketPayout($data['ticket_id'], $data['quantity']);
+            $this->attendeePayout($data);
+
+            return $checkout;   
+        } catch (\Throwable $th) {
+            throw new PayoutException();
+        }
     }
 
     public function getOneBy(int $id): Checkout
@@ -71,5 +73,24 @@ class CheckoutRepositoryModel implements CheckoutRepository
             $checkout->total_price,
             $checkout->status
         );
+    }
+
+    private function ticketPayout(int $ticketId, int $quantity): TicketModel
+    {
+        $ticket = $this->ticketRepository->getOne($ticketId);
+        return $this->ticketRepository->decreaseAvailableQuantity($ticket->id, $quantity);
+    }
+
+    private function attendeePayout(array $data): AttendeeModel
+    {
+        $attendee = [
+            'ticket_id' => $data['ticket_id'],
+            'name' => $data['attendee_name'],
+            'phone_number' => $data['attendee_phone_number'],
+            'email' => $data['attendee_email'],
+
+        ];
+
+        return $this->attendeeRepository->create($attendee);
     }
 }
