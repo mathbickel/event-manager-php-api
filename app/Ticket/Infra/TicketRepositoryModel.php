@@ -57,4 +57,28 @@ class TicketRepositoryModel implements TicketRepository
     {
         $this->ticket->find($id)->delete();
     }
+
+    /**
+     * @param int $ticketId
+     * @param int $quantity
+     * @return void
+     */
+    public function decreaseAvailableQuantity(int $ticketId, int $quantity): TicketModel
+    {
+        $ticket = $this->ticket->find($ticketId);
+        $ticket->available_quantity - $quantity;
+        return $ticket->save();
+    }
+
+    /**
+     * @param int $ticketId
+     * @param int $quantity
+     * @return void
+     */
+    public function increaseAvailableQuantity(int $ticketId, int $quantity): TicketModel
+    {
+        $ticket = $this->ticket->find($ticketId);
+        $ticket->available_quantity + $quantity;
+        return $ticket->save();
+    }
 }

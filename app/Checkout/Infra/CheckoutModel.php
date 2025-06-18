@@ -13,7 +13,10 @@ class CheckoutModel extends Model
     protected $fillable = [
         'ticket_id', 
         'attendee_id', 
-        'quantity', 
+        'quantity',
+        'attendee_name',
+        'attendee_phone_number', 
+        'attendee_email',
         'total_price', 
         'status'
     ];
