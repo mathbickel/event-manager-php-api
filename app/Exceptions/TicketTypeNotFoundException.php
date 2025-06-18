@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Exceptions;
-class NotFoundException extends BaseException
+
+class TicketTypeNotFoundException extends BaseException
 {
     public function __construct(
-        string $message = 'Resource not found',
+        string $message = 'Ticket type not found', 
         array $data = []
     ){
         parent::__construct($message, 404, $data);

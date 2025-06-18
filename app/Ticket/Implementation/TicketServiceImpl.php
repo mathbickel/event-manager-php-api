@@ -118,6 +118,11 @@ class TicketServiceImpl implements TicketService
         return $this->getOneCommand;
     }
 
+    private function getTicketBy(string $type): Ticket
+    {
+        return $this->getOneCommand->execute($type);
+    }
+
     /**
      * @param array $data
      * @param bool $isEdit
